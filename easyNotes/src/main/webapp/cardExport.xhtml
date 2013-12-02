@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<h:outputStylesheet library="css" name="style.css" />
+	<title>easyNotes - Export</title>
+</h:head>
+<h:body>
+	<h1>Export cards of #{cardExportController.selectedNotebook.title}</h1>
+	<hr />
+	<h:form>
+		<h:messages />
+
+		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">
+			<h:outputLabel value="Export mode :" />
+			<h:selectOneMenu value="#{cardExportController.exportMode}">
+				<f:selectItem itemValue="1"
+					itemLabel="Fronttext - Backtext - Description" />
+				<f:selectItem itemValue="2" itemLabel="Fronttext - Backtext" />
+				<f:selectItem itemValue="3" itemLabel="Backtext - Fronttext" />
+				<f:selectItem itemValue="4"
+					itemLabel="Fronttext - Backtext and Description" />
+			</h:selectOneMenu>
+		</h:panelGrid>
+		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">
+			<h:outputLabel value="Word delimiter :" />
+			<h:inputText value="#{cardExportController.wordDelimiter}" size="20" />
+		</h:panelGrid>
+		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">
+			<h:outputLabel value="Record delimiter :" />
+			<h:inputText value="#{cardExportController.recordDelimiter}"
+				size="20" />
+		</h:panelGrid>
+		<h:commandButton value="Export cards" includeViewParams="true"
+			action="#{cardExportController.exportCards}" />
+		<br />
+		<h:panelGrid columns="1">
+			<h:inputTextarea value="#{cardExportController.exportString}"
+				cols="100" rows="20" />
+		</h:panelGrid>
+		<br />
+		<h:commandButton value="Back"
+			action="#{cardExportController.backToCardList}" />
+	</h:form>
+	<hr />
+	<i>easyNotes</i>
+</h:body>
+</html>

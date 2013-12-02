@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<h:outputStylesheet library="css" name="style.css" />
+	<title>easyNotes - Cards</title>
+</h:head>
+<h:body>
+	<h1>Cards of #{cardController.selectedNotebook.title}</h1>
+	<h:panelGrid columns="2">
+		<h:outputLabel value="Nr of cards :" />
+		<h:outputText value="#{cardController.nrOfCards}" />
+	</h:panelGrid>
+	<h:panelGrid columns="2">
+		<h:outputLabel value="Last edited :" />
+		<h:outputText value="#{cardController.lastEdited}" />
+	</h:panelGrid>
+
+	<hr />
+	<h:form>
+		<h:dataTable styleClass="general-table"
+			headerClass="general-table-header"
+			rowClasses="general-table-odd-row,general-table-even-row"
+			value="#{cardController.cardList}" var="card">
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Fronttext" />
+				</f:facet>
+				<h:outputText value="#{card.frontText}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Backtext" />
+				</f:facet>
+				<h:outputText value="#{card.backText}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Last learned" />
+				</f:facet>
+				<h:outputText value="#{card.lastLearned}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Next scheduled" />
+				</f:facet>
+				<h:outputText value="#{card.nextScheduled}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Progess" />
+				</f:facet>
+				<h:outputText value="#{card.compartment}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Action</f:facet>
+				<h:commandLink value="Edit"
+					action="#{cardController.editCard(card)}" />
+			</h:column>
+		</h:dataTable>
+
+		<br />
+
+		<h:commandButton value="Back"
+			action="#{cardController.backToNotebookList}" />
+		<h:commandButton value="Add a new card"
+			action="#{cardController.addNewCard}" />
+		<h:commandButton value="Import cards"
+			action="#{cardImportController.openImportPage(cardController.selectedNotebook)}" />
+		<h:commandButton value="Export cards"
+			action="#{cardExportController.openExportPage(cardController.selectedNotebook)}" />
+	</h:form>
+	<hr />
+	<i>easyNotes</i>
+</h:body>
+</html>

@@ -1,0 +1,4 @@
+fronttext;backtext;description
+Fronttext1;Backtext1;Description1
+Fronttext2;;"Description2;TextafterSemicolon;""Text after Semicolon in Doublequotes with missing Endquote.""
+Fronttext3;Backtext3;Description3

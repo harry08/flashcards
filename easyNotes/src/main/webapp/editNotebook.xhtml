@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<h:outputStylesheet library="css" name="style.css" />
+	<title>#{notebookController.editTitle}</title>
+</h:head>
+<h:body>
+	<h1>#{notebookController.editTitle}</h1>
+	<hr />
+	<h:form>
+		<h3>Notebook</h3>
+		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">
+			<h:outputLabel value="Title :" />
+			<h:inputText value="#{notebookController.notebook.title}" size="60" />
+		</h:panelGrid>
+		
+		<br />
+		<h3>Categories</h3>
+		<h:dataTable value="#{notebookController.notebookCategoryList}" var="categoryEntry">
+			<h:column>
+				￼<h:selectBooleanCheckbox value="#{categoryEntry.notebookCategory}" />
+				<h:outputLabel value="#{categoryEntry.title}" />
+			</h:column>			
+		</h:dataTable>
+	  	  
+		<br />
+		
+		<h:commandButton value="Cancel"
+			action="#{notebookController.cancelEdit}" />
+		<h:commandButton value="Save"
+			action="#{notebookController.updateNotebook}" />
+	</h:form>
+	<hr />
+	<i>easyNotes</i>
+</h:body>
+</html>

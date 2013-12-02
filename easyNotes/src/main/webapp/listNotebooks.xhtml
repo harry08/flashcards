@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<h:outputStylesheet library="css" name="style.css" />
+	<title>easyNotes - Notebooks</title>
+</h:head>
+<h:body>
+	<h1>Notebooks</h1>
+	<hr />
+	<h:form>
+		<h:panelGrid columns="3" columnClasses="edit-grid-label-col">
+			<h:outputLabel value="Category :" />
+			<h:selectOneMenu value="#{notebookController.category}">
+				<f:selectItem itemValue="1" itemLabel="None" />
+				<f:selectItem itemValue="2" itemLabel="All" />
+			</h:selectOneMenu>
+			<h:commandButton value="..."
+				action="#{notebookController.manageCategories}" />
+		</h:panelGrid>
+		<br />
+		<h:dataTable styleClass="general-table"
+			headerClass="general-table-header"
+			rowClasses="general-table-odd-row,general-table-even-row"
+			value="#{notebookController.notebookList}" var="notebook">
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="ID" />
+				</f:facet>
+				<h:outputText value="#{notebook.id}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">
+					<h:outputText value="Title" />
+				</f:facet>
+				<h:outputText value="#{notebook.title}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Action</f:facet>
+				<h:commandLink value="Cards"
+					action="#{cardController.selectNotebook(notebook)}" />
+			</h:column>
+			<h:column>
+				<f:facet name="header">Action</f:facet>
+				<h:commandLink value="Edit"
+					action="#{notebookController.editNotebook(notebook)}" />
+			</h:column>
+		</h:dataTable>
+
+		<br />
+
+		<h:commandButton value="Add a new notebook"
+			action="#{notebookController.addNewNotebook}" />
+	</h:form>
+	<hr />
+	<i>easyNotes</i>
+</h:body>
+</html>

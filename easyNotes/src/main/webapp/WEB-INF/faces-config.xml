@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+	version="2.0">
+
+	<navigation-rule>
+		<from-view-id>/editNotebook.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{notebookController.updateNotebook}</from-action>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/listNotebooks.xhtml</to-view-id>
+		</navigation-case>		
+		<navigation-case>
+			<from-action>#{notebookController.cancelEdit}</from-action>
+			<from-outcome>cancel</from-outcome>
+			<to-view-id>/listNotebooks.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<from-view-id>/editCard.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{cardController.updateCard}</from-action>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/listCards.xhtml</to-view-id>
+		</navigation-case>		
+		<navigation-case>
+			<from-action>#{cardController.cancelEdit}</from-action>
+			<from-outcome>cancel</from-outcome>
+			<to-view-id>/listCards.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<from-view-id>/editCategory.xhtml</from-view-id>
+		<navigation-case>
+			<from-action>#{categoryController.updateCategory}</from-action>
+			<from-outcome>success</from-outcome>
+			<to-view-id>/listCategories.xhtml</to-view-id>
+		</navigation-case>		
+		<navigation-case>
+			<from-action>#{categoryController.cancelEdit}</from-action>
+			<from-outcome>cancel</from-outcome>
+			<to-view-id>/listCategories.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+</faces-config>
