@@ -21,6 +21,7 @@ import de.huebner.easynotes.FileUtils;
 import de.huebner.easynotes.UnitTestConstants;
 import de.huebner.easynotes.businesslogic.NotesServiceBusinessException;
 import de.huebner.easynotes.businesslogic.data.Card;
+import de.huebner.easynotes.businesslogic.data.Category;
 import de.huebner.easynotes.businesslogic.data.Notebook;
 
 public class NotesServiceImplTest {
@@ -55,6 +56,39 @@ public class NotesServiceImplTest {
 		notesService = new NotesServiceImpl();
 		notesService.setEntityManager(em);
 	}
+	
+	@Test
+	public void shouldCreateNotebooks() throws Exception {
+	  Category cat1 = new Category();
+	  cat1.setTitle("Category I");
+	  Category cat2 = new Category();
+    cat2.setTitle("Category II");
+	  
+	  Notebook notebook1 = new Notebook();
+    notebook1.setTitle("Cards I");
+    notebook1.addCategoryToNotebook(cat1);
+    notebook1.addCategoryToNotebook(cat2);
+    Notebook notebook2 = new Notebook();
+    notebook2.setTitle("Cards II");
+    Notebook notebook3 = new Notebook();
+    notebook3.setTitle("Cards III");
+    notebook3.addCategoryToNotebook(cat1);
+    
+    // Persist the notebooks to the database
+    tx.begin();
+    cat1 = notesService.updateCategory(cat1);
+    cat2 = notesService.updateCategory(cat2);
+    notebook1 = notesService.updateNotebook(notebook1);
+    notebook2 = notesService.updateNotebook(notebook2);
+    notebook3 = notesService.updateNotebook(notebook3);
+    tx.commit();
+    
+    // Retrieve notebooks from the database
+    List<Notebook> notebooksCat1 = notesService.getAllNotebooks(cat1);
+    assertEquals(2, notebooksCat1.size());  
+    List<Notebook> notebooksCat2 = notesService.getAllNotebooks(cat2);
+    assertEquals(1, notebooksCat2.size());
+	}
 
 	@Test
 	public void shouldCreateCards() throws Exception {
@@ -73,7 +107,7 @@ public class NotesServiceImplTest {
 		card2.setBackText("Back2");
 		card2.setText("Text2");
 
-		// Persists the book to the database
+		// Persist the notebook and cards to the database
 		tx.begin();
 		notebook = notesService.updateNotebook(notebook);
 		card1 = notesService.updateCard(card1);
@@ -81,7 +115,7 @@ public class NotesServiceImplTest {
 		tx.commit();
 		assertNotNull("ID should not be null", card1.getId());
 		assertNotNull("ID should not be null", card2.getId());
-		// Retrieves all the cards from the database
+		// Retrieve all the cards from the database
 		List<Card> cards = notesService.getCardsOfNotebook(notebook);
 		assertEquals(2, cards.size());
 		Card createdCard = cards.get(0);
