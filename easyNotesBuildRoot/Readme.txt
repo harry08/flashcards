@@ -1,6 +1,6 @@
 Simple JEE test application
 
-Purpose: Managing flashcards
+Purpose: Managing flashcards.
 In the moment the application handles only flashcards. It will be extended to handle notes. A flashcard is then a special type of note.  
 
 Usage of the following JEE-specificiations:
