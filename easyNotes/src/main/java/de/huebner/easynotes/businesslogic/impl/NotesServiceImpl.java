@@ -82,7 +82,8 @@ public class NotesServiceImpl implements Serializable {
 	 * @return list with all notebooks associated to the specified category
 	 */
 	public List<Notebook> getAllNotebooks(Category category) {
-		Query query = entityManager.createNamedQuery("Notebook.findAllNotebooks");
+		Query query = entityManager.createNamedQuery("Notebook.findNotebooksForCategory");
+		query.setParameter("catid", category.getId());
 
 		// Query ausfuehren
 		@SuppressWarnings("unchecked")

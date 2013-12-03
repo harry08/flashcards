@@ -87,6 +87,11 @@ public class Category {
   }
 
   @Override
+  public boolean equals(Object o) {
+    return ((o instanceof Category) && title.equals(((Category)o).getTitle()) && id == ((Category)o).getId());
+  }
+
+  @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
     sb.append("Category");
