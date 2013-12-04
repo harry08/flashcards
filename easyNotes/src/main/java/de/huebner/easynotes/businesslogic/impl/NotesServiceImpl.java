@@ -100,7 +100,7 @@ public class NotesServiceImpl implements Serializable {
 	public List<Category> getAllCategories() {
 		Query query = entityManager.createNamedQuery("Category.findAllCategories");
 
-		// Query ausfuehren
+		// Perform Query
 		@SuppressWarnings("unchecked")
 		List<Category> result = query.getResultList();
 
@@ -118,11 +118,25 @@ public class NotesServiceImpl implements Serializable {
 		Query query = entityManager.createNamedQuery("Card.findCardsOfNotebook");
 		query.setParameter("notebook", notebook);
 
-		// Query ausfuehren
+		// Perform Query
 		@SuppressWarnings("unchecked")
 		List<Card> result = query.getResultList();
 
 		return result;
+	}
+	
+	public Notebook getNotebook(long id) {
+		Query query = entityManager.createNamedQuery("Notebook.findNotebookWithId");
+		query.setParameter("id", id);
+		
+		// Perform Query
+		@SuppressWarnings("unchecked")
+		List<Notebook> result = query.getResultList();
+		if (result.size() == 1) {
+			return result.get(0);
+		}
+				
+		return null;
 	}
 
 	/**
@@ -166,17 +180,26 @@ public class NotesServiceImpl implements Serializable {
 
 		return updatedCategory;
 	}
-
+	
 	/**
-	 * Removes the given category. If there are notebooks associated to this
-	 * category, these associations first get removed.
+	 * Deletes the given category. If there are notebooks associated to this
+	 * category, these associations first will be removed.
 	 * 
 	 * @param category
 	 *          category to remove
 	 * @return true, if the category could be removed.
 	 */
-	public boolean removeCategory(Category category) {
-		// TODO implement
+	public boolean deleteCategory(Category category) {
+		// Remove notebook associations
+		List<Notebook> catNotebooks = getAllNotebooks(category);
+		if (catNotebooks != null && catNotebooks.size() > 0) {
+			for (Notebook currentNotebook : catNotebooks) {
+				currentNotebook.removeCategoryFromNotebook(category);
+				entityManager.merge(currentNotebook);
+			}
+		}
+		
+		entityManager.remove(category);
 
 		return true;
 	}
@@ -193,7 +216,7 @@ public class NotesServiceImpl implements Serializable {
 	 */
 	public int importCards(String importString, Notebook notebook)
 			throws NotesServiceBusinessException {
-		// Extract cards out of the inputstring
+		// Extract cards out of the input string
 		CardsImporter cardsImporter = new CardsImporter();
 		List<Card> cardList;
 		try {
@@ -246,11 +269,11 @@ public class NotesServiceImpl implements Serializable {
 	}
 
 	/**
-	 * Setzt den {@link EntityManager}, der von dieser Instanz verwendet wird (nur
-	 * fuer Tests ausserhalb eines Servers).
+	 * Setzt den {@link EntityManager}, der von dieser Instanz verwendet wird
+	 * (nur fuer Tests ausserhalb eines Servers).
 	 * 
 	 * @param entityManager
-	 *          der zu verwendende EntityManager
+	 *            EntityManager to use
 	 */
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
@@ -260,7 +283,7 @@ public class NotesServiceImpl implements Serializable {
 	 * Liefert den {@link EntityManager}, der von dieser Instanz verwendet wird
 	 * (nur fuer Tests ausserhalb eines Servers).
 	 * 
-	 * @return verwendeter EntityManager
+	 * @return used EntityManager
 	 */
 	public EntityManager getEntityManager() {
 		return entityManager;

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.event.ValueChangeEvent;
 
 import de.huebner.easynotes.businesslogic.data.Category;
 import de.huebner.easynotes.businesslogic.data.Notebook;
@@ -28,9 +29,9 @@ public class NotebookController implements Serializable {
 	private NotesServiceImpl notesServiceImpl;
 
 	/**
-	 * Represents the selected category to filter the list of notebooks
+	 * Represents the selected category. Used to filter the list of notebooks
 	 */
-	private String selectedCategory = "";
+	private String selectedCategoryId = String.valueOf(CategorySelectItem.ITEM_CAT_ALL);
 
 	/**
 	 * Current notebook to edit
@@ -45,17 +46,36 @@ public class NotebookController implements Serializable {
 	private List<Category> categoryList;
 
 	/**
-	 * List with category - notebook asscociations. For every existing category an
+	 * List with category entries to select in the dropdown box
+	 */
+	private List<CategorySelectItem> categorySelectItems;
+
+	/**
+	 * List with category - notebook associations. For every existing category an
 	 * entry exists in this list. Each entry contains an information if this
 	 * category is associated to the selected notebook.
 	 */
 	private List<CategoryEntry> notebookCategoryList;
 
 	private String editTitle;
+	
+	private boolean needRefresh = false;
 
 	public List<Notebook> getNotebookList() {
-		if (notebookList == null) {
-			notebookList = notesServiceImpl.getAllNotebooks();
+		if (notebookList == null || needRefresh == true) {
+			if (selectedCategoryId.equals(String.valueOf(CategorySelectItem.ITEM_CAT_ALL))) {
+				// select all notebooks
+				notebookList = notesServiceImpl.getAllNotebooks();
+			} else if (selectedCategoryId.equals(String.valueOf(CategorySelectItem.ITEM_CAT_NOTSELECTED))) {
+				// select notebooks with no associated category
+				notebookList = new ArrayList<Notebook>();
+			} else {
+				// select notebooks with specified category
+				Category selectedCategory = getCategoryWithId(selectedCategoryId);
+				notebookList = notesServiceImpl.getAllNotebooks(selectedCategory);
+			}
+			
+			needRefresh = false;
 		}
 
 		return notebookList;
@@ -91,8 +111,45 @@ public class NotebookController implements Serializable {
 		return notebookCategoryList;
 	}
 
+	/**
+	 * Returns a list with CategorySelectItems to display in the category dropdown
+	 * element.
+	 * 
+	 * @return list with CategorySelectItems
+	 */
+	public List<CategorySelectItem> getCategorySelectItems() {
+		if (categorySelectItems == null) {
+			// Make sure categories are init.
+			getCategoryList();
+
+			categorySelectItems = new ArrayList<CategorySelectItem>(categoryList.size() + 2);
+			categorySelectItems.add(new CategorySelectItem(CategorySelectItem.ITEM_CAT_ALL, "All categories"));
+			categorySelectItems.add(new CategorySelectItem(CategorySelectItem.ITEM_CAT_NOTSELECTED, "Not selected"));
+			for (Category currentCategory : categoryList) {
+				CategorySelectItem currentItem = new CategorySelectItem(currentCategory);
+				categorySelectItems.add(currentItem);
+			}
+		}
+
+		return categorySelectItems;
+	}
+
 	private boolean notebookHasCategory(Category categoryToCheck) {
 		return notebook.containsCategory(categoryToCheck);
+	}
+	
+	/**
+	 * Change method for category dropdown
+	 * 
+	 * @param e
+	 *            event
+	 */
+	public void categoryChanged(ValueChangeEvent e) {
+		selectedCategoryId = e.getNewValue().toString();
+		System.out.println("Category changed. New value = " + selectedCategoryId);
+		
+		needRefresh = true;
+		getNotebookList();
 	}
 
 	/**
@@ -175,11 +232,11 @@ public class NotebookController implements Serializable {
 	}
 
 	public String getCategory() {
-		return selectedCategory;
+		return selectedCategoryId;
 	}
 
 	public void setCategory(String category) {
-		this.selectedCategory = category;
+		this.selectedCategoryId = category;
 	}
 
 	public NotesServiceImpl getNotesServiceImpl() {
@@ -192,5 +249,16 @@ public class NotebookController implements Serializable {
 
 	public String getEditTitle() {
 		return editTitle;
+	}
+	
+	private Category getCategoryWithId(String categoryId) {
+		long catId = Long.valueOf(categoryId);
+		for (Category currentCategory : categoryList) {
+			if (currentCategory.getId() == catId) {
+				return currentCategory;
+			}
+		}
+		
+		return null;
 	}
 }

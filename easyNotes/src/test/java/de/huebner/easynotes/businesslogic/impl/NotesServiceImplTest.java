@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -12,6 +13,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -57,37 +59,90 @@ public class NotesServiceImplTest {
 		notesService.setEntityManager(em);
 	}
 	
+//	@After
+//	public void tearDown() {
+//		tx = em.getTransaction();
+//		tx.rollback();		
+//	}
+	
 	@Test
 	public void shouldCreateNotebooks() throws Exception {
-	  Category cat1 = new Category();
-	  cat1.setTitle("Category I");
-	  Category cat2 = new Category();
-    cat2.setTitle("Category II");
-	  
-	  Notebook notebook1 = new Notebook();
-    notebook1.setTitle("Cards I");
-    notebook1.addCategoryToNotebook(cat1);
-    notebook1.addCategoryToNotebook(cat2);
-    Notebook notebook2 = new Notebook();
-    notebook2.setTitle("Cards II");
-    Notebook notebook3 = new Notebook();
-    notebook3.setTitle("Cards III");
-    notebook3.addCategoryToNotebook(cat1);
-    
-    // Persist the notebooks to the database
-    tx.begin();
-    cat1 = notesService.updateCategory(cat1);
-    cat2 = notesService.updateCategory(cat2);
-    notebook1 = notesService.updateNotebook(notebook1);
-    notebook2 = notesService.updateNotebook(notebook2);
-    notebook3 = notesService.updateNotebook(notebook3);
-    tx.commit();
-    
-    // Retrieve notebooks from the database
-    List<Notebook> notebooksCat1 = notesService.getAllNotebooks(cat1);
-    assertEquals(2, notebooksCat1.size());  
-    List<Notebook> notebooksCat2 = notesService.getAllNotebooks(cat2);
-    assertEquals(1, notebooksCat2.size());
+		Category cat1 = new Category();
+		cat1.setTitle("Category I");
+		Category cat2 = new Category();
+		cat2.setTitle("Category II");
+
+		Notebook notebook1 = new Notebook();
+		notebook1.setTitle("Cards I");
+		notebook1.addCategoryToNotebook(cat1);
+		notebook1.addCategoryToNotebook(cat2);
+		Notebook notebook2 = new Notebook();
+		notebook2.setTitle("Cards II");
+		Notebook notebook3 = new Notebook();
+		notebook3.setTitle("Cards III");
+		notebook3.addCategoryToNotebook(cat1);
+
+		// Persist the notebooks to the database
+		tx.begin();
+		cat1 = notesService.updateCategory(cat1);
+		cat2 = notesService.updateCategory(cat2);
+		notebook1 = notesService.updateNotebook(notebook1);
+		notebook2 = notesService.updateNotebook(notebook2);
+		notebook3 = notesService.updateNotebook(notebook3);
+		tx.commit();
+
+		// Retrieve notebooks from the database
+		List<Notebook> notebooksCat1 = notesService.getAllNotebooks(cat1);
+		assertEquals(2, notebooksCat1.size());
+		List<Notebook> notebooksCat2 = notesService.getAllNotebooks(cat2);
+		assertEquals(1, notebooksCat2.size());
+	}
+	
+	@Test
+	public void shouldDeleteCategory() {
+		Category cat1 = new Category();
+		cat1.setTitle("Category I");
+		Category cat2 = new Category();
+		cat2.setTitle("Category II");
+
+		Notebook notebook1 = new Notebook();
+		notebook1.setTitle("Cards I");
+		notebook1.addCategoryToNotebook(cat1);
+		notebook1.addCategoryToNotebook(cat2);
+		Notebook notebook2 = new Notebook();
+		notebook2.setTitle("Cards II");
+		Notebook notebook3 = new Notebook();
+		notebook3.setTitle("Cards III");
+		notebook3.addCategoryToNotebook(cat1);
+
+		// Persist the notebooks to the database
+		tx.begin();
+		cat1 = notesService.updateCategory(cat1);
+		cat2 = notesService.updateCategory(cat2);
+		notebook1 = notesService.updateNotebook(notebook1);
+		notebook2 = notesService.updateNotebook(notebook2);
+		notebook3 = notesService.updateNotebook(notebook3);
+		tx.commit();
+		
+		// Check newly created data
+		List<Category> categories = notesService.getAllCategories();
+		assertEquals(2, categories.size());
+		List<Notebook> notebooksCat1 = notesService.getAllNotebooks(cat1);
+		assertEquals(2, notebooksCat1.size());
+		Collection<Category> catsNotebook1 = notebook1.getCategories();
+		assertEquals(2, catsNotebook1.size());
+		long notebook1Id = notebook1.getId();
+		
+		// Delete Category I
+		tx.begin();
+		notesService.deleteCategory(cat1);
+		tx.commit();
+		
+		// Get Data again and check
+		categories = notesService.getAllCategories();
+		assertEquals(1, categories.size());		
+		notebook1 = notesService.getNotebook(notebook1Id);
+		assertEquals(1, notebook1.getCategories().size());
 	}
 
 	@Test

@@ -23,7 +23,8 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = "Notebook.findAllNotebooks", query = "SELECT nb FROM Notebook nb"),
     @NamedQuery(name = "Notebook.findNotebooksForCategory", query = "SELECT nb FROM Notebook nb JOIN nb.categories cat "
-        + " WHERE cat.id = :catid")})
+        + " WHERE cat.id = :catid"),
+    @NamedQuery(name = "Notebook.findNotebookWithId", query = "SELECT nb FROM Notebook nb WHERE nb.id = :id") })
 public class Notebook {
 
   /**
