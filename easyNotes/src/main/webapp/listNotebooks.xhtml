@@ -13,9 +13,10 @@
 	<h:form>
 		<h:panelGrid columns="3" columnClasses="edit-grid-label-col">
 			<h:outputLabel value="Category :" />
-			<h:selectOneMenu value="#{notebookController.category}">
-				<f:selectItem itemValue="1" itemLabel="None" />
-				<f:selectItem itemValue="2" itemLabel="All" />
+			<h:selectOneMenu value="#{notebookController.category}"
+				onchange="submit()" valueChangeListener="#{notebookController.categoryChanged}">
+				<f:selectItems value="#{notebookController.categorySelectItems}"
+					var="item" itemLabel="#{item.title}" itemValue="#{item.itemId}" />
 			</h:selectOneMenu>
 			<h:commandButton value="..."
 				action="#{notebookController.manageCategories}" />
