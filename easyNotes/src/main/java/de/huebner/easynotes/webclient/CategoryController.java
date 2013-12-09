@@ -36,7 +36,7 @@ public class CategoryController implements Serializable {
 	private boolean needCategoryRefresh = false;
 	
 	@ManagedProperty(value="#{notebookController}")
-  private NotebookController notebookController;
+	private NotebookController notebookController;
 
 	public List<Category> getCategoryList() {
 		if (categoryList == null) {
@@ -67,7 +67,7 @@ public class CategoryController implements Serializable {
    * 
    * @param category
    *          category to delete
-   * @return page with the updated category list.
+   * @return null. This shows the current page again.
    */
   public String deleteCategory(Category category) {
     notesServiceImpl.deleteCategory(category);
