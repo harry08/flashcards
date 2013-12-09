@@ -1,12 +1,11 @@
 package de.huebner.easynotes.webclient;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 
 import de.huebner.easynotes.businesslogic.data.Category;
@@ -34,19 +33,10 @@ public class CategoryController implements Serializable {
 	
 	private String editTitle;
 	
-	private String parentPage = "listNotebooks.xhtml";
-
-	/**
-	 * Is called from JSF after creation.
-	 */
-	@PostConstruct
-	public void init() {
-		if (notesServiceImpl != null) {
-			categoryList = notesServiceImpl.getAllCategories();
-		} else {
-			categoryList = new ArrayList<Category>();
-		}
-	}
+	private boolean needCategoryRefresh = false;
+	
+	@ManagedProperty(value="#{notebookController}")
+  private NotebookController notebookController;
 
 	public List<Category> getCategoryList() {
 		if (categoryList == null) {
@@ -71,6 +61,20 @@ public class CategoryController implements Serializable {
 
 		return "editCategory.xhtml";
 	}
+	
+  /**
+   * Deletes the selected category.
+   * 
+   * @param category
+   *          category to delete
+   * @return page with the updated category list.
+   */
+  public String deleteCategory(Category category) {
+    notesServiceImpl.deleteCategory(category);
+    needCategoryRefresh = true;
+
+    return "listCategories.xhtml";
+  }
 
 	/**
 	 * Persists the edited category and refreshes the cardList. Returns success.
@@ -79,8 +83,10 @@ public class CategoryController implements Serializable {
 	 */
 	public String updateCategory() {
 		category = notesServiceImpl.updateCategory(category);
+		needCategoryRefresh = true;
+		
 		categoryList = notesServiceImpl.getAllCategories();
-
+		
 		return "success";
 	}
 	
@@ -104,7 +110,7 @@ public class CategoryController implements Serializable {
 	}
 	
 	public String backToNotebookList() {
-		return parentPage;
+	  return notebookController.showNotebookList(needCategoryRefresh);
 	}
 
 	public Category getCategory() {
@@ -122,6 +128,14 @@ public class CategoryController implements Serializable {
 	public void setNotesServiceImpl(NotesServiceImpl notesServiceImpl) {
 		this.notesServiceImpl = notesServiceImpl;
 	}
+	
+	public NotebookController getNotebookController() {
+    return notebookController;
+  }
+
+  public void setNotebookController(NotebookController notebookController) {
+    this.notebookController = notebookController;
+  }
 
 	public String getEditTitle() {
 		return editTitle;

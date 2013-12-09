@@ -14,9 +14,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.huebner.easynotes.FileUtils;
@@ -36,34 +34,25 @@ public class NotesServiceImplTest {
 
 	private static EntityTransaction tx;
 
-	@BeforeClass
-	public static void initEntityManager() throws Exception {
-		emf = Persistence.createEntityManagerFactory(UnitTestConstants.TEST_UNIT_NAME);
-		em = emf.createEntityManager();
-	}
-
-	@AfterClass
-	public static void closeEntityManager() throws SQLException {
-		if (em != null) {
-			em.close();
-		}
-		if (emf != null) {
-			emf.close();
-		}
-	}
-
 	@Before
-	public void setup() {
-		tx = em.getTransaction();
-		notesService = new NotesServiceImpl();
-		notesService.setEntityManager(em);
-	}
+  public void setup() {
+    emf = Persistence.createEntityManagerFactory(UnitTestConstants.TEST_UNIT_NAME);
+    em = emf.createEntityManager();
+    
+    tx = em.getTransaction();
+    notesService = new NotesServiceImpl();
+    notesService.setEntityManager(em);
+  }
 	
-//	@After
-//	public void tearDown() {
-//		tx = em.getTransaction();
-//		tx.rollback();		
-//	}
+  @After
+  public void treardown() throws SQLException {
+    if (em != null) {
+      em.close();
+    }
+    if (emf != null) {
+      emf.close();
+    }
+  }
 	
 	@Test
 	public void shouldCreateNotebooks() throws Exception {
@@ -91,7 +80,9 @@ public class NotesServiceImplTest {
 		notebook3 = notesService.updateNotebook(notebook3);
 		tx.commit();
 
-		// Retrieve notebooks from the database
+		// Check newly created data
+		List<Category> categories = notesService.getAllCategories();
+    assertEquals(2, categories.size());
 		List<Notebook> notebooksCat1 = notesService.getAllNotebooks(cat1);
 		assertEquals(2, notebooksCat1.size());
 		List<Notebook> notebooksCat2 = notesService.getAllNotebooks(cat2);
@@ -138,7 +129,7 @@ public class NotesServiceImplTest {
 		notesService.deleteCategory(cat1);
 		tx.commit();
 		
-		// Get Data again and check
+		// Get data again and check
 		categories = notesService.getAllCategories();
 		assertEquals(1, categories.size());		
 		notebook1 = notesService.getNotebook(notebook1Id);
@@ -170,7 +161,8 @@ public class NotesServiceImplTest {
 		tx.commit();
 		assertNotNull("ID should not be null", card1.getId());
 		assertNotNull("ID should not be null", card2.getId());
-		// Retrieve all the cards from the database
+		
+		// Retrieve all the cards from the database and check
 		List<Card> cards = notesService.getCardsOfNotebook(notebook);
 		assertEquals(2, cards.size());
 		Card createdCard = cards.get(0);

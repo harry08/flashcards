@@ -13,8 +13,6 @@ import de.huebner.easynotes.businesslogic.data.Category;
 import de.huebner.easynotes.businesslogic.data.Notebook;
 import de.huebner.easynotes.businesslogic.impl.NotesServiceImpl;
 
-// TODO: Update category list after editing categories
-
 /**
  * Controller to manage notebooks. This includes showing a list of notebooks and
  * editing a notebook.
@@ -221,6 +219,16 @@ public class NotebookController implements Serializable {
 		editTitle = "Create a new notebook";
 
 		return "editNotebook.xhtml";
+	}
+	
+	public String showNotebookList(boolean refresh) {
+	  if (refresh) {
+      getNotebookCategoryList();
+      // TODO select a category
+      getNotebookList(); 
+    }
+	  
+	  return "listNotebooks.xhtml";
 	}
 
 	public Notebook getNotebook() {
