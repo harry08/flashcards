@@ -32,6 +32,11 @@
 				<h:commandLink value="Edit"
 					action="#{categoryController.editCategory(category)}" />
 			</h:column>
+			<h:column>
+				<f:facet name="header">Action</f:facet>
+				<h:commandLink value="Delete"
+					action="#{categoryController.deleteCategory(category)}" />
+			</h:column>
 		</h:dataTable>
 		
 		<br />

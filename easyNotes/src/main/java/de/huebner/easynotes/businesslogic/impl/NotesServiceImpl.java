@@ -190,7 +190,10 @@ public class NotesServiceImpl implements Serializable {
 	 * @return true, if the category could be removed.
 	 */
 	public boolean deleteCategory(Category category) {
-		// Remove notebook associations
+	  // category might be detached, so merge it before.
+	  category = entityManager.merge(category);
+	  
+	  // Remove notebook associations
 		List<Notebook> catNotebooks = getAllNotebooks(category);
 		if (catNotebooks != null && catNotebooks.size() > 0) {
 			for (Notebook currentNotebook : catNotebooks) {

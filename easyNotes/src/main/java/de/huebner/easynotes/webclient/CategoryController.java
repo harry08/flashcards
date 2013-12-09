@@ -1,10 +1,8 @@
 package de.huebner.easynotes.webclient;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -63,6 +61,20 @@ public class CategoryController implements Serializable {
 
 		return "editCategory.xhtml";
 	}
+	
+  /**
+   * Deletes the selected category.
+   * 
+   * @param category
+   *          category to delete
+   * @return page with the updated category list.
+   */
+  public String deleteCategory(Category category) {
+    notesServiceImpl.deleteCategory(category);
+    needCategoryRefresh = true;
+
+    return "listCategories.xhtml";
+  }
 
 	/**
 	 * Persists the edited category and refreshes the cardList. Returns success.
