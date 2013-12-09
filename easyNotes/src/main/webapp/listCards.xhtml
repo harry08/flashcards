@@ -59,6 +59,11 @@
 				<h:commandLink value="Edit"
 					action="#{cardController.editCard(card)}" />
 			</h:column>
+			<h:column>
+        <f:facet name="header">Action</f:facet>
+        <h:commandLink value="Delete"
+          action="#{cardController.deleteCard(card)}" />
+      </h:column>
 		</h:dataTable>
 
 		<br />

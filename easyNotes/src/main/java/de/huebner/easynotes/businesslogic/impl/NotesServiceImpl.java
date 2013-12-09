@@ -152,6 +152,20 @@ public class NotesServiceImpl implements Serializable {
 
 		return updatedCard;
 	}
+	
+	/**
+	 * Deletes the given card. 
+	 * 
+	 * @param card
+	 *          card to delete
+	 * @return true, if the card could be removed.
+	 */
+	public boolean deleteCard(Card card) {
+		card = entityManager.merge(card);
+		entityManager.remove(card);
+
+		return true;
+	}
 
 	/**
 	 * Creates or updates the given notebook to the database

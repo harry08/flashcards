@@ -137,6 +137,19 @@ public class CardController implements Serializable {
 		return "editCard.xhtml";
 	}
 	
+	/**
+	 * Deletes the given card
+	 * 
+	 * @param card
+	 *            card to delete
+	 * @return null. This results in the presentation of the same page
+	 */
+	public String deleteCard(Card card) {
+		notesServiceImpl.deleteCard(card);
+		retrieveCards();
+
+		return null;
+	}
 	
 	public String showCardList(boolean refresh) {
 		if (refresh) {
