@@ -15,7 +15,7 @@ import de.huebner.easynotes.businesslogic.impl.NotesServiceImpl;
 
 /**
  * Controller to manage cards. This includes showing a list of cards for a
- * selected notebook and editing a card.
+ * selected notebook, editing a card and showing a card in slide mode.
  */
 @ManagedBean
 @SessionScoped
@@ -29,14 +29,44 @@ public class CardController implements Serializable {
 	private Notebook selectedNotebook;
 
 	private Card card;
+	
+	/**
+	 * Header to display in slide mode
+	 */
+	private String cardHeader;
+	
+	/**
+	 * Subheader to display in slide mode
+	 */
+	private String cardSubheader;
+	
+	/**
+	 * Text to display in slide mode
+	 */
+	private String cardText;
+	
+	/**
+	 * Is true, when the attribute cardSubheader is filled.
+	 */
+	private boolean subheaderAvailable;
+	
+	/**
+	 * Is true, when the cardText is filled.
+	 */
+	private boolean textAvailable;
+	
+	private int currentSlideNr;
 
 	@EJB
 	private NotesServiceImpl notesServiceImpl;
 
 	private List<Card> cardList;
 
-	private String editTitle;
-
+	/**
+	 * Generated title of page
+	 */
+	private String pageTitle;
+	
 	private String nrOfCards;
 
 	private String lastEdited;
@@ -94,19 +124,86 @@ public class CardController implements Serializable {
 	/**
 	 * Edits the selected card.
 	 * 
-	 * @param notebook
-	 *          notebook to edit
-	 * @return Page to edit the notebook.
+	 * @param card
+	 *          card to edit
+	 * @return Page to edit the card.
 	 */
 	public String editCard(Card card) {
 		System.out.println("editCard with card called. Card: " + card);
 		this.card = card;
 
-		editTitle = "Edit card";
+		pageTitle = "Edit card";
 
 		return "editCard.xhtml";
 	}
+	
+  /**
+   * Shows the selected card in a slide mode.
+   * 
+   * @param card
+   *          card to show
+   * @return Page to show a card in a slide mode
+   */
+  public String showCard(Card card) {
+    this.card = card;
+    currentSlideNr = cardList.indexOf(card);
 
+    generateSlideInformation();
+
+    return "cardSlide.xhtml";
+  }
+
+	/**
+	 * Called in slide mode. Shows the previous card of the cardlist.
+	 * 
+	 * @return null to show the current page.
+	 */
+	public String previousCard() {
+		if (currentSlideNr > 0) {
+			currentSlideNr--;
+			card = cardList.get(currentSlideNr);
+		}
+
+		generateSlideInformation();
+
+		return null;
+	}
+
+	/**
+	 * Called in slide mode. Shows the next card of the cardlist.
+	 * 
+	 * @return null to show the current page.
+	 */
+	public String nextCard() {
+		if (currentSlideNr < cardList.size() - 1) {
+			currentSlideNr++;
+			card = cardList.get(currentSlideNr);
+		}
+
+		generateSlideInformation();
+
+		return null;
+	}
+  
+	private void generateSlideInformation() {
+		int size = cardList.size();
+		int nr = currentSlideNr + 1;
+		
+		pageTitle = "Card " + nr + " of " + size;
+
+		cardHeader = card.getFrontText();
+		cardSubheader = card.getBackText();
+		if (cardSubheader == null) {
+			cardSubheader = "";
+		}
+		subheaderAvailable = cardSubheader.length() > 0;
+		cardText = card.getText();
+		if (cardText == null) {
+			cardText = "";
+		}
+		textAvailable = cardText.length() > 0;
+	}
+  
 	/**
 	 * Persists the edited card and refreshes the cardList. Returns success.
 	 * Success is interpreted to show the cardlist page with the updated card
@@ -122,6 +219,10 @@ public class CardController implements Serializable {
 	public String cancelEdit() {
 		return "cancel";
 	}
+	
+	public String cancelSlideMode() {
+		return "cancel";
+	}
 
 	/**
 	 * Creates a new card instance and returns the edit page to edit this card.
@@ -132,7 +233,7 @@ public class CardController implements Serializable {
 		card = new Card();
 		card.setNotebook(selectedNotebook);
 
-		editTitle = "Create a new card";
+		pageTitle = "Create a new card";
 
 		return "editCard.xhtml";
 	}
@@ -175,12 +276,44 @@ public class CardController implements Serializable {
 		this.card = card;
 	}
 
+	public String getCardHeader() {
+    return cardHeader;
+  }
+
+  public void setCardHeader(String cardHeader) {
+    this.cardHeader = cardHeader;
+  }
+
+  public String getCardSubheader() {
+    return cardSubheader;
+  }
+
+  public void setCardSubheader(String cardSubheader) {
+    this.cardSubheader = cardSubheader;
+  }
+
+  public String getCardText() {
+    return cardText;
+  }
+
+  public void setCardText(String cardText) {
+    this.cardText = cardText;
+  }
+
+	public boolean getSubheaderAvailable() {
+		return subheaderAvailable;
+	}
+
+	public boolean getTextAvailable() {
+		return textAvailable;
+	}
+
 	public Notebook getSelectedNotebook() {
 		return selectedNotebook;
 	}
 
-	public String getEditTitle() {
-		return editTitle;
+	public String getPageTitle() {
+		return pageTitle;
 	}
 
 	public String getNrOfCards() {

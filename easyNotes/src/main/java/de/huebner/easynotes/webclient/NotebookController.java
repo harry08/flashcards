@@ -56,24 +56,10 @@ public class NotebookController implements Serializable {
 	private List<CategoryEntry> notebookCategoryList;
 
 	private String editTitle;
-	
-	private boolean needRefresh = false;
 
 	public List<Notebook> getNotebookList() {
-		if (notebookList == null || needRefresh == true) {
-			if (selectedCategoryId.equals(String.valueOf(CategorySelectItem.ITEM_CAT_ALL))) {
-				// select all notebooks
-				notebookList = notesServiceImpl.getAllNotebooks();
-			} else if (selectedCategoryId.equals(String.valueOf(CategorySelectItem.ITEM_CAT_NOTSELECTED))) {
-				// select notebooks with no associated category
-				notebookList = new ArrayList<Notebook>();
-			} else {
-				// select notebooks with specified category
-				Category selectedCategory = getCategoryWithId(selectedCategoryId);
-				notebookList = notesServiceImpl.getAllNotebooks(selectedCategory);
-			}
-			
-			needRefresh = false;
+		if (notebookList == null) {
+			retrieveNotebookList();
 		}
 
 		return notebookList;
@@ -81,7 +67,7 @@ public class NotebookController implements Serializable {
 
 	public List<Category> getCategoryList() {
 		if (categoryList == null) {
-			categoryList = notesServiceImpl.getAllCategories();
+			retrieveCategoryList();
 		}
 
 		return categoryList;
@@ -94,16 +80,7 @@ public class NotebookController implements Serializable {
 	 */
 	public List<CategoryEntry> getNotebookCategoryList() {
 		if (notebookCategoryList == null) {
-			// Make sure categories are init.
-			getCategoryList();
-
-			notebookCategoryList = new ArrayList<CategoryEntry>(categoryList.size());
-			for (Category currentCategory : categoryList) {
-				boolean entryChecked = notebookHasCategory(currentCategory);
-
-				CategoryEntry currentEntry = new CategoryEntry(currentCategory, entryChecked);
-				notebookCategoryList.add(currentEntry);
-			}
+			generateNotebookCategoryList();			
 		}
 
 		return notebookCategoryList;
@@ -117,16 +94,7 @@ public class NotebookController implements Serializable {
 	 */
 	public List<CategorySelectItem> getCategorySelectItems() {
 		if (categorySelectItems == null) {
-			// Make sure categories are init.
-			getCategoryList();
-
-			categorySelectItems = new ArrayList<CategorySelectItem>(categoryList.size() + 2);
-			categorySelectItems.add(new CategorySelectItem(CategorySelectItem.ITEM_CAT_ALL, "All categories"));
-			categorySelectItems.add(new CategorySelectItem(CategorySelectItem.ITEM_CAT_NOTSELECTED, "Not selected"));
-			for (Category currentCategory : categoryList) {
-				CategorySelectItem currentItem = new CategorySelectItem(currentCategory);
-				categorySelectItems.add(currentItem);
-			}
+			generateCategorySelectItems();
 		}
 
 		return categorySelectItems;
@@ -137,17 +105,15 @@ public class NotebookController implements Serializable {
 	}
 	
 	/**
-	 * Change method for category dropdown
+	 * Change method for category dropdown. The notebooklist is updated.
 	 * 
 	 * @param e
 	 *            event
 	 */
 	public void categoryChanged(ValueChangeEvent e) {
 		selectedCategoryId = e.getNewValue().toString();
-		System.out.println("Category changed. New value = " + selectedCategoryId);
 		
-		needRefresh = true;
-		getNotebookList();
+		retrieveNotebookList();
 	}
 
 	/**
@@ -167,7 +133,7 @@ public class NotebookController implements Serializable {
 	 * @return Page to edit the notebook.
 	 */
 	public String editNotebook(Notebook notebook) {
-		notebookCategoryList = null;
+		generateNotebookCategoryList();
 
 		this.notebook = notebook;
 
@@ -177,7 +143,7 @@ public class NotebookController implements Serializable {
 	}
 
 	/**
-	 * Persists the edited notebook and refreshes the cardList. Returns success.
+	 * Persists the edited notebook and refreshes the notebookList. Returns success.
 	 * Success is interpreted to show the notebooklist page with the updated
 	 * notebook list.
 	 */
@@ -197,7 +163,7 @@ public class NotebookController implements Serializable {
 		}
 
 		notebook = notesServiceImpl.updateNotebook(notebook);
-		notebookList = notesServiceImpl.getAllNotebooks();
+		retrieveNotebookList();
 
 		return "success";
 	}
@@ -221,14 +187,23 @@ public class NotebookController implements Serializable {
 		return "editNotebook.xhtml";
 	}
 	
+	/**
+	 * Shows the notebooklist page
+	 * 
+	 * @param refresh
+	 *            indicates that the underlying data has to be refetched.
+	 * @return notebooklist page
+	 */
 	public String showNotebookList(boolean refresh) {
-	  if (refresh) {
-      getNotebookCategoryList();
-      // TODO select a category
-      getNotebookList(); 
-    }
-	  
-	  return "listNotebooks.xhtml";
+		if (refresh) {
+			retrieveCategoryList();
+			generateCategorySelectItems();
+			selectedCategoryId = String.valueOf(CategorySelectItem.ITEM_CAT_ALL);
+			
+			retrieveNotebookList();
+		}
+
+		return "listNotebooks.xhtml";
 	}
 
 	public Notebook getNotebook() {
@@ -268,5 +243,63 @@ public class NotebookController implements Serializable {
 		}
 		
 		return null;
+	}
+	
+	
+	/**
+	 * Generates the list with notebook - category associations.
+	 */
+	private void generateNotebookCategoryList() {
+		// Make sure categories are init.
+		getCategoryList();
+
+		notebookCategoryList = new ArrayList<CategoryEntry>(categoryList.size());
+		for (Category currentCategory : categoryList) {
+			boolean entryChecked = notebookHasCategory(currentCategory);
+
+			CategoryEntry currentEntry = new CategoryEntry(currentCategory,	entryChecked);
+			notebookCategoryList.add(currentEntry);
+		}
+	}
+	
+	
+	/**
+	 * Creates the list for the category dropdown
+	 */
+	private void generateCategorySelectItems() {
+		// Make sure categories are init.
+		getCategoryList();
+
+		categorySelectItems = new ArrayList<CategorySelectItem>(categoryList.size() + 2);
+		categorySelectItems.add(new CategorySelectItem(CategorySelectItem.ITEM_CAT_ALL, "All categories"));
+		categorySelectItems.add(new CategorySelectItem(CategorySelectItem.ITEM_CAT_NOTSELECTED, "Not selected"));
+		for (Category currentCategory : categoryList) {
+			CategorySelectItem currentItem = new CategorySelectItem(currentCategory);
+			categorySelectItems.add(currentItem);
+		}
+	}
+	
+	/**
+	 * Fetches the categories from the server.
+	 */
+	private void retrieveCategoryList() {
+		categoryList = notesServiceImpl.getAllCategories();
+	}
+	
+	/**
+	 * Fetches the notebooks from the server.
+	 */
+	private void retrieveNotebookList() {
+		if (selectedCategoryId.equals(String.valueOf(CategorySelectItem.ITEM_CAT_ALL))) {
+			// select all notebooks
+			notebookList = notesServiceImpl.getAllNotebooks();
+		} else if (selectedCategoryId.equals(String.valueOf(CategorySelectItem.ITEM_CAT_NOTSELECTED))) {
+			// select notebooks with no associated category
+			notebookList = new ArrayList<Notebook>();
+		} else {
+			// select notebooks with specified category
+			Category selectedCategory = getCategoryWithId(selectedCategoryId);
+			notebookList = notesServiceImpl.getAllNotebooks(selectedCategory);
+		}
 	}
 }

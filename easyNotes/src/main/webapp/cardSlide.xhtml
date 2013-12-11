@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html">
+<h:head>
+  <h:outputStylesheet library="css" name="style.css" />
+  <title>#{cardController.pageTitle}</title>
+</h:head>
+<h:body>
+  <h1>#{cardController.pageTitle}</h1>
+  <hr />
+  <h:form>
+  
+    <h:panelGrid columns="3">
+      <h:commandButton value="Prev" action="#{cardController.previousCard}" />
+      <h:column>
+        <h:outputText value="#{cardController.cardHeader}" style="font-weight: bold; font-size: 18px; width: 350px;" />
+        <br />
+        <h:outputText value="#{cardController.cardSubheader}" rendered="#{cardController.subheaderAvailable}" style="font-weight: bold; font-size: 16px; width: 350px;"/>
+        <br />
+        <h:outputText value="#{cardController.cardText}" rendered="#{cardController.textAvailable}" style="width: 350px;"/>
+      </h:column>
+      <h:commandButton value="Next" action="#{cardController.nextCard}" />
+    </h:panelGrid>    
+
+    <br />
+
+    <h:commandButton value="Back" action="#{cardController.cancelSlideMode}" />
+  </h:form>
+  <hr />
+  <i>easyNotes</i>
+</h:body>
+</html>

@@ -321,6 +321,13 @@ public class Card {
 		cardsWrongTotal++;
 		nrOfWrongTotal = cardsWrongTotal;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		return ((o instanceof Card) && id == ((Card) o).getId()
+				&& frontText.equals(((Card) o).getFrontText()) && backText
+					.equals(((Card) o).getBackText()));
+	}
 
 	@Override
 	public String toString() {

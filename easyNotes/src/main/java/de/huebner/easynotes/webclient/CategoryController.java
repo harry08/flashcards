@@ -33,14 +33,17 @@ public class CategoryController implements Serializable {
 	
 	private String editTitle;
 	
-	private boolean needCategoryRefresh = false;
+	/**
+	 * Indicates that the user has changed category data on this page.  
+	 */
+	private boolean dataChanged = false;
 	
 	@ManagedProperty(value="#{notebookController}")
 	private NotebookController notebookController;
 
 	public List<Category> getCategoryList() {
 		if (categoryList == null) {
-			categoryList = notesServiceImpl.getAllCategories();
+			retrieveCategoryList();
 		}
 
 		return categoryList;
@@ -71,9 +74,11 @@ public class CategoryController implements Serializable {
    */
   public String deleteCategory(Category category) {
     notesServiceImpl.deleteCategory(category);
-    needCategoryRefresh = true;
+    dataChanged = true;
 
-    return "listCategories.xhtml";
+    retrieveCategoryList();
+    
+    return null;
   }
 
 	/**
@@ -83,9 +88,9 @@ public class CategoryController implements Serializable {
 	 */
 	public String updateCategory() {
 		category = notesServiceImpl.updateCategory(category);
-		needCategoryRefresh = true;
+		dataChanged = true;
 		
-		categoryList = notesServiceImpl.getAllCategories();
+		retrieveCategoryList();
 		
 		return "success";
 	}
@@ -110,7 +115,10 @@ public class CategoryController implements Serializable {
 	}
 	
 	public String backToNotebookList() {
-	  return notebookController.showNotebookList(needCategoryRefresh);
+		boolean needRefresh = dataChanged;
+		dataChanged = false;
+		
+		return notebookController.showNotebookList(needRefresh);
 	}
 
 	public Category getCategory() {
@@ -130,14 +138,21 @@ public class CategoryController implements Serializable {
 	}
 	
 	public NotebookController getNotebookController() {
-    return notebookController;
-  }
+		return notebookController;
+	}
 
-  public void setNotebookController(NotebookController notebookController) {
-    this.notebookController = notebookController;
-  }
+	public void setNotebookController(NotebookController notebookController) {
+		this.notebookController = notebookController;
+	}
 
 	public String getEditTitle() {
 		return editTitle;
+	}
+	
+	/**
+	 * Fetches the categories from the server.
+	 */
+	private void retrieveCategoryList() {
+		categoryList = notesServiceImpl.getAllCategories();
 	}
 }
