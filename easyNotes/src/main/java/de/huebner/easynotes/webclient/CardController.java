@@ -129,7 +129,6 @@ public class CardController implements Serializable {
 	 * @return Page to edit the card.
 	 */
 	public String editCard(Card card) {
-		System.out.println("editCard with card called. Card: " + card);
 		this.card = card;
 
 		pageTitle = "Edit card";

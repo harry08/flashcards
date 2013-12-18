@@ -299,9 +299,15 @@ public class CardsImporter {
 	}
 
 	private void updateImportMode(String headerValue) {
-		if (headerValue.toLowerCase().equals(HEADER_NOTES)) {
+		String headerString = headerValue.trim();
+		headerString = headerString.toLowerCase();
+		
+		if (headerString.equals(HEADER_NOTES)) {
 			importMode = IMPORT_MODE_NOTES;
-		} else if (headerValue.toLowerCase().equals(HEADER_CARDS)) {
+		} else if (headerString.equals(HEADER_CARDS)) {
+			importMode = IMPORT_MODE_CARDS;
+		} else {
+			// Default mode
 			importMode = IMPORT_MODE_CARDS;
 		}
 	}

@@ -27,6 +27,11 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "Notebook.findNotebookWithId", query = "SELECT nb FROM Notebook nb WHERE nb.id = :id") })
 public class Notebook {
 
+	/**
+	 * Query to select all notebooks that are not associated to any category.
+	 */
+	public static final String NB_WITHOUT_CATEGORY_QUERY = "SELECT * FROM notebook WHERE id not in (SELECT notebook_id FROM nb_category)";
+	
   /**
    * Internal unique id of the notebook
    */

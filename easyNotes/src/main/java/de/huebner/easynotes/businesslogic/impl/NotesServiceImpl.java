@@ -28,7 +28,7 @@ public class NotesServiceImpl implements Serializable {
 
 	@PersistenceContext(unitName = "NotesPersistenceUnit")
 	private EntityManager entityManager;
-
+	
 	private void setAutomaticValues(Card card) {
 		boolean insert = (card.getId() <= 0);
 
@@ -67,7 +67,7 @@ public class NotesServiceImpl implements Serializable {
 	public List<Notebook> getAllNotebooks() {
 		Query query = entityManager.createNamedQuery("Notebook.findAllNotebooks");
 
-		// Query ausfuehren
+		// Perform query
 		@SuppressWarnings("unchecked")
 		List<Notebook> result = query.getResultList();
 
@@ -85,7 +85,23 @@ public class NotesServiceImpl implements Serializable {
 		Query query = entityManager.createNamedQuery("Notebook.findNotebooksForCategory");
 		query.setParameter("catid", category.getId());
 
-		// Query ausfuehren
+		// Perform query
+		@SuppressWarnings("unchecked")
+		List<Notebook> result = query.getResultList();
+
+		return result;
+	}
+	
+	/**
+	 * Returns a list of all notebooks that are not associated to a category
+	 * 
+	 * @return list with all notebooks associated to no category
+	 */
+	public List<Notebook> getAllNotebooksWithNoCategory() {
+		Query query = entityManager.createNativeQuery(
+				Notebook.NB_WITHOUT_CATEGORY_QUERY, Notebook.class);
+
+		// Perform query
 		@SuppressWarnings("unchecked")
 		List<Notebook> result = query.getResultList();
 
@@ -255,8 +271,7 @@ public class NotesServiceImpl implements Serializable {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			entityManager.getTransaction().setRollbackOnly();
-			throw new NotesServiceBusinessException("Error while importing cards");
+			throw new NotesServiceBusinessException("Error while importing cards.");
 		}
 
 		return i;
