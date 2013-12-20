@@ -22,6 +22,10 @@ import de.huebner.easynotes.businesslogic.impl.NotesServiceImpl;
 public class CardController implements Serializable {
 
 	private static final long serialVersionUID = -9123720022516582466L;
+	
+	private static final int CARD_SIDE_FRONT = 1;
+	private static final int CARD_SIDE_BACK = 2;
+	private static final int CARD_SIDE_BOTH = 3;
 
 	/**
 	 * The cards are selected for this notebook.
@@ -46,18 +50,26 @@ public class CardController implements Serializable {
 	private String cardText;
 	
 	/**
-	 * Is true, when the attribute cardSubheader is filled.
+	 * Is true, when the subheader for the card should be shown.
 	 */
-	private boolean subheaderAvailable;
+	private boolean subheaderShown;
 	
 	/**
-	 * Is true, when the cardText is filled.
+	 * Is true, when the text for the card should be shown.
 	 */
-	private boolean textAvailable;
+	private boolean textShown;
 	
+	/**
+	 * nr of the currently displayed card in slide mode
+	 */
 	private int currentSlideNr;
+	
+	/**
+	 * indicator which side of the currently displayed card is shown. front, back or both
+	 */
+	private int currentCardSide;
 
-	@EJB
+  @EJB
 	private NotesServiceImpl notesServiceImpl;
 
 	private List<Card> cardList;
@@ -146,6 +158,7 @@ public class CardController implements Serializable {
   public String showCard(Card card) {
     this.card = card;
     currentSlideNr = cardList.indexOf(card);
+    currentCardSide = CARD_SIDE_FRONT;
 
     generateSlideInformation();
 
@@ -161,6 +174,9 @@ public class CardController implements Serializable {
 		if (currentSlideNr > 0) {
 			currentSlideNr--;
 			card = cardList.get(currentSlideNr);
+			if (currentCardSide != CARD_SIDE_BOTH) {
+			  currentCardSide = CARD_SIDE_FRONT;
+			}
 		}
 
 		generateSlideInformation();
@@ -168,39 +184,93 @@ public class CardController implements Serializable {
 		return null;
 	}
 
-	/**
-	 * Called in slide mode. Shows the next card of the cardlist.
-	 * 
-	 * @return null to show the current page.
-	 */
-	public String nextCard() {
-		if (currentSlideNr < cardList.size() - 1) {
-			currentSlideNr++;
-			card = cardList.get(currentSlideNr);
-		}
+  /**
+   * Called in slide mode. Shows the next card of the cardlist.
+   * 
+   * @return null to show the current page.
+   */
+  public String nextCard() {
+    if (currentSlideNr < cardList.size() - 1) {
+      currentSlideNr++;
+      card = cardList.get(currentSlideNr);
+      if (currentCardSide != CARD_SIDE_BOTH) {
+        currentCardSide = CARD_SIDE_FRONT;
+      }
+    }
 
-		generateSlideInformation();
+    generateSlideInformation();
 
-		return null;
-	}
+    return null;
+  }
+	
+  /**
+   * Flips the side of the currently displayed card.
+   * 
+   * @return null to show the current page.
+   */
+  public String flipCard() {
+    if (currentCardSide == CARD_SIDE_FRONT) {
+      currentCardSide = CARD_SIDE_BACK;
+    } else {
+      currentCardSide = CARD_SIDE_FRONT;
+    }
+    
+    generateSlideInformation();
+        
+    return null;
+  }
   
 	private void generateSlideInformation() {
 		int size = cardList.size();
 		int nr = currentSlideNr + 1;
 		
-		pageTitle = "Card " + nr + " of " + size;
+		String sideInfo = "";
+		if (currentCardSide == CARD_SIDE_FRONT) {
+      sideInfo = " - front";
+    } else if (currentCardSide == CARD_SIDE_BACK) {
+      sideInfo = " - back";
+    }
+		
+		pageTitle = "Card " + nr + " of " + size + sideInfo;
+		
 
-		cardHeader = card.getFrontText();
-		cardSubheader = card.getBackText();
-		if (cardSubheader == null) {
-			cardSubheader = "";
+		String frontText = card.getFrontText();
+    String backText = card.getBackText();
+    if (backText == null) {
+      backText = "";
+    }
+    String text = card.getText();
+    if (text == null) {
+      text = "";
+    }
+    
+		if (currentCardSide == CARD_SIDE_FRONT) {
+		  // Display the fronttext of the card
+		  cardHeader = frontText;
+		  cardSubheader = "";
+		  cardText = "";
+		  
+		  subheaderShown = false;
+      textShown = false;
+		  
+		} else if (currentCardSide == CARD_SIDE_BACK) {
+		  // Display the backtext and the description text of the card
+		  cardHeader = backText;
+      cardSubheader = "";
+      cardText = text;
+      
+      subheaderShown = false;
+      textShown = cardText.length() > 0;
+		  
+		} else {
+		  // Show all information from the card
+		  cardHeader = frontText;
+      cardSubheader = backText;
+      cardText = text;
+      
+      subheaderShown = cardSubheader.length() > 0;
+      textShown = cardText.length() > 0;
 		}
-		subheaderAvailable = cardSubheader.length() > 0;
-		cardText = card.getText();
-		if (cardText == null) {
-			cardText = "";
-		}
-		textAvailable = cardText.length() > 0;
 	}
   
 	/**
@@ -299,13 +369,17 @@ public class CardController implements Serializable {
     this.cardText = cardText;
   }
 
-	public boolean getSubheaderAvailable() {
-		return subheaderAvailable;
+	public boolean getSubheaderShown() {
+		return subheaderShown;
 	}
 
-	public boolean getTextAvailable() {
-		return textAvailable;
+	public boolean getTextShown() {
+		return textShown;
 	}
+	
+	public int getCurrentCardSide() {
+    return currentCardSide;
+  }
 
 	public Notebook getSelectedNotebook() {
 		return selectedNotebook;

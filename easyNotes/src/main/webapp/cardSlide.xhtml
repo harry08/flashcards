@@ -11,21 +11,23 @@
   <hr />
   <h:form>
   
+  	<h:commandButton value="Flip" action="#{cardController.flipCard}" />
+  	<br />
     <h:panelGrid columns="3" columnClasses="slide-table-col-button, slide-table-col-text, slide-table-col-button">
       <h:commandButton value="Prev" action="#{cardController.previousCard}" styleClass="slide-table-button" />
       <h:column>
         <h:outputText value="#{cardController.cardHeader}" styleClass="slide-header-field" />
         <br />
-        <h:outputText value="#{cardController.cardSubheader}" rendered="#{cardController.subheaderAvailable}" styleClass="slide-subheader-field"/>
+        <h:outputText value="#{cardController.cardSubheader}" rendered="#{cardController.subheaderShown}" styleClass="slide-subheader-field"/>
         <br />
-        <h:outputText value="#{cardController.cardText}" rendered="#{cardController.textAvailable}" styleClass="slide-text-field"/> 
+        <h:outputText value="#{cardController.cardText}" rendered="#{cardController.textShown}" styleClass="slide-text-field"/> 
       </h:column>
       <h:commandButton value="Next" action="#{cardController.nextCard}" styleClass="slide-table-button" />
     </h:panelGrid>    
 
     <br />
 
-    <h:commandButton value="Back" action="#{cardController.cancelSlideMode}" />
+    <h:commandButton value="Back" action="#{cardController.cancelSlideMode}" />    
   </h:form>
   <hr />
   <i>easyNotes</i>
