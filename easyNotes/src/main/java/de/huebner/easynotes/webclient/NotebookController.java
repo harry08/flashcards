@@ -133,9 +133,9 @@ public class NotebookController implements Serializable {
 	 * @return Page to edit the notebook.
 	 */
 	public String editNotebook(Notebook notebook) {
-		generateNotebookCategoryList();
-
 		this.notebook = notebook;
+		
+		generateNotebookCategoryList();
 
 		editTitle = "Edit notebook";
 
@@ -181,6 +181,8 @@ public class NotebookController implements Serializable {
 	public String addNewNotebook() {
 		notebook = new Notebook();
 		notebook.setTitle("new Notebook");
+		
+		// TODO clearNotebookCategoryList
 
 		editTitle = "Create a new notebook";
 		
@@ -326,7 +328,7 @@ public class NotebookController implements Serializable {
 			notebookList = notesServiceImpl.getAllNotebooks();
 		} else if (selectedCategoryId.equals(String.valueOf(CategorySelectItem.ITEM_CAT_NOTSELECTED))) {
 			// select notebooks with no associated category
-			notebookList = new ArrayList<Notebook>();
+			notebookList = notesServiceImpl.getAllNotebooksWithNoCategory();
 		} else {
 			// select notebooks with specified category
 			Category selectedCategory = getCategoryWithId(selectedCategoryId);
