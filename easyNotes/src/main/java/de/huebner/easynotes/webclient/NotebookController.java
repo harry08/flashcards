@@ -182,8 +182,6 @@ public class NotebookController implements Serializable {
 		notebook = new Notebook();
 		notebook.setTitle("new Notebook");
 		
-		// TODO clearNotebookCategoryList
-
 		editTitle = "Create a new notebook";
 		
 		generateInitialNotebookCategoryList();
