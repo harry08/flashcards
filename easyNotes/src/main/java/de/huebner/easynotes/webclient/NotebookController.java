@@ -183,9 +183,26 @@ public class NotebookController implements Serializable {
 		notebook.setTitle("new Notebook");
 
 		editTitle = "Create a new notebook";
+		
+		generateInitialNotebookCategoryList();
 
 		return "editNotebook.xhtml";
 	}
+	
+	/**
+   * Deletes the given notebook
+   * 
+   * @param notebook
+   *            notebook to delete
+   * @return null. This results in the presentation of the same page
+   */
+  public String deleteNotebook(Notebook notebook) {
+    notesServiceImpl.deleteNotebook(notebook);
+    
+    retrieveNotebookList();
+
+    return null;
+  }
 	
 	/**
 	 * Shows the notebooklist page
@@ -263,6 +280,20 @@ public class NotebookController implements Serializable {
 	}
 	
 	
+	/**
+	 * Generates an initial list with notebook - category associations.
+	 */
+	private void generateInitialNotebookCategoryList() {
+	  // Make sure categories are init.
+    getCategoryList();
+
+    notebookCategoryList = new ArrayList<CategoryEntry>(categoryList.size());
+    for (Category currentCategory : categoryList) {
+      CategoryEntry currentEntry = new CategoryEntry(currentCategory, false);
+      notebookCategoryList.add(currentEntry);
+    }
+	}
+		
 	/**
 	 * Creates the list for the category dropdown
 	 */

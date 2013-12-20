@@ -2,12 +2,15 @@ package de.huebner.easynotes.businesslogic;
 
 import java.util.List;
 
+import javax.ejb.Remote;
+
 import de.huebner.easynotes.businesslogic.data.Card;
 import de.huebner.easynotes.businesslogic.data.Notebook;
 
 /**
- * Fassade fuer den Zugriff auf die Notes-Tabellen.
+ * Facade interface for accessing the notes database. 
  */
+@Remote
 public interface NotesService {
 
 	public List<Notebook> getAllNotebooks();
