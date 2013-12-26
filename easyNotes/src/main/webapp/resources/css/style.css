@@ -32,3 +32,37 @@ h1 {
 .edit-grid-label-col{ 
 	width: 120px;
 }
+
+.slide-text-field{
+/*     white-space: pre; */
+	width: 400px;
+	max-width: 400px;
+}
+
+.slide-header-field{
+	width: 400px;
+	max-width: 400px;
+	font-weight: bold; 
+	font-size: 18px;
+}	
+
+.slide-subheader-field{
+	width: 400px;
+	max-width: 400px;
+	font-weight: bold; 
+	font-size: 16px;
+}
+
+.slide-table-col-button {
+	width: 80px;
+	vertical-align: top
+}
+
+.slide-table-col-text {
+	width: 400px;
+	max-width: 400px
+}
+
+.slide-table-button {
+	width: 50px;
+}

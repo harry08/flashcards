@@ -196,6 +196,30 @@ public class NotesServiceImpl implements Serializable {
 
 		return updatedNotebook;
 	}
+	
+  /**
+   * Deletes the given notebook. If there are cards associated to this
+   * notebook, these cards first will be deleted
+   * 
+   * @param notebook
+   *          notebook to delete
+   */
+  public boolean deleteNotebook(Notebook notebook) {
+    // notebook might be detached, so merge it before.
+    Notebook notebookToDelete = entityManager.merge(notebook);
+    
+    // Delete contained cards
+    List<Card> nbCards = getCardsOfNotebook(notebookToDelete);
+    if (nbCards != null && nbCards.size() > 0) {
+      for (Card currentCard : nbCards) {
+        entityManager.remove(currentCard);
+      }
+    }
+    
+    entityManager.remove(notebookToDelete);
+    
+    return true;
+  }
 
 	/**
 	 * Creates or updates the given category to the database
@@ -221,18 +245,18 @@ public class NotesServiceImpl implements Serializable {
 	 */
 	public boolean deleteCategory(Category category) {
 	  // category might be detached, so merge it before.
-	  category = entityManager.merge(category);
+	  Category categoryToDelete = entityManager.merge(category);
 	  
 	  // Remove notebook associations
-		List<Notebook> catNotebooks = getAllNotebooks(category);
+		List<Notebook> catNotebooks = getAllNotebooks(categoryToDelete);
 		if (catNotebooks != null && catNotebooks.size() > 0) {
 			for (Notebook currentNotebook : catNotebooks) {
-				currentNotebook.removeCategoryFromNotebook(category);
+				currentNotebook.removeCategoryFromNotebook(categoryToDelete);
 				entityManager.merge(currentNotebook);
 			}
 		}
 		
-		entityManager.remove(category);
+		entityManager.remove(categoryToDelete);
 
 		return true;
 	}
@@ -319,5 +343,5 @@ public class NotesServiceImpl implements Serializable {
 	 */
 	public EntityManager getEntityManager() {
 		return entityManager;
-	}
+	}  
 }
