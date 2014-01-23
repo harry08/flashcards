@@ -22,7 +22,10 @@ import javax.persistence.TemporalType;
 @NamedQueries({
 		@NamedQuery(name = "Card.findAllCards", query = "SELECT c FROM Card c"),
 		@NamedQuery(name = "Card.findCardsOfNotebook", query = "SELECT c FROM Card c "
-				+ "WHERE c.notebook = :notebook") })
+				+ "WHERE c.notebook = :notebook"),
+		@NamedQuery(name = "Card.findCardsForLesson", query = "SELECT c FROM Card c "
+				+ "WHERE c.notebook = :notebook AND (c.nextScheduled <= :nextScheduled OR c.nextScheduled IS NULL)"
+				+ "ORDER BY c.nextScheduled") })
 public class Card {
 
 	public final static int NO_ANSWER = 0;

@@ -1,6 +1,7 @@
 package de.huebner.easynotes.businesslogic.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +18,9 @@ import de.huebner.easynotes.businesslogic.io.CardExportData;
 import de.huebner.easynotes.businesslogic.io.CardsExporter;
 import de.huebner.easynotes.businesslogic.io.CardsImporter;
 import de.huebner.easynotes.businesslogic.io.CardsImporterException;
+import de.huebner.easynotes.businesslogic.study.LearnProgressCalculator;
+import de.huebner.easynotes.businesslogic.study.LearnProgressCalculator.LearnProgress;
+import de.huebner.easynotes.businesslogic.study.SessionStatistic;
 
 /**
  * Facade for accessing the notes database. Includes business logic.
@@ -35,6 +39,10 @@ public class NotesServiceImpl implements Serializable {
 		Date modificationDate = new Date();
 		if (insert) {
 			card.setCreated(modificationDate);
+			card.setNextScheduled(modificationDate);
+		} else {
+			if (card.getNextScheduled() == null) {
+			}
 		}
 		card.setModified(modificationDate);
 	}
@@ -141,6 +149,29 @@ public class NotesServiceImpl implements Serializable {
 		return result;
 	}
 	
+	public List<Card> getCardsForLesson(Notebook notebook, int maxCards) {
+		Query query = entityManager.createNamedQuery("Card.findCardsForLesson");
+		query.setParameter("notebook", notebook);
+		query.setParameter("nextScheduled", new Date());
+		
+		// Perform Query
+		@SuppressWarnings("unchecked")
+		List<Card> tempList = query.getResultList();
+		
+		int requiredSize = tempList.size();
+		if (requiredSize > maxCards) {
+			requiredSize = maxCards;
+		}
+		List<Card> result = new ArrayList<Card>(requiredSize);
+		int i = 0;
+		while (i < requiredSize) {
+			result.add(tempList.get(i));
+			i++;
+		}
+
+		return result;
+	}
+	
 	public Notebook getNotebook(long id) {
 		Query query = entityManager.createNamedQuery("Notebook.findNotebookWithId");
 		query.setParameter("id", id);
@@ -154,7 +185,52 @@ public class NotesServiceImpl implements Serializable {
 				
 		return null;
 	}
+	
+	/**
+	 * Commits the results of the learned cards. <br>
+	 * This includes calculating the learn progress of each card and committing
+	 * this information to the database.
+	 * 
+	 * @param studiedCards
+	 *            list with learned cards.
+	 * @return Statistic record
+	 */
+	public SessionStatistic commitLearnSession(List<Card> studiedCards) {
+		SessionStatistic stat = new SessionStatistic();
+		stat.setNrOfCards(studiedCards.size());
+		LearnProgressCalculator calculator = new LearnProgressCalculator();
 
+		for (Card currentCard : studiedCards) {
+			if (currentCard.isAnswered()) {
+				// Calculate learn progress
+				LearnProgressCalculator.LearnProgress progress = calculator
+						.calculate(currentCard.getLastLearned(),
+								currentCard.getAnswer(),
+								currentCard.getNrOfCorrect(),
+								currentCard.getNrOfWrong());
+
+				currentCard.setNextScheduled(progress.getNextScheduled());
+				currentCard.setCompartment(progress.getCompartment());
+
+				stat.incNrOfLearned();
+			} else {
+				stat.incNrOfNotAnswered();
+			}
+
+			if (currentCard.isAnsweredCorrect()) {
+				stat.incNrOfCorrect();
+			} else if (currentCard.isAnsweredWrong()) {
+				stat.incNrOfWrong();
+			}
+		}
+
+		for (Card currentCard : studiedCards) {
+			entityManager.merge(currentCard);
+		}
+
+		return stat;
+	}
+	
 	/**
 	 * Creates or updates the given card to the database
 	 * 
@@ -197,29 +273,29 @@ public class NotesServiceImpl implements Serializable {
 		return updatedNotebook;
 	}
 	
-  /**
-   * Deletes the given notebook. If there are cards associated to this
-   * notebook, these cards first will be deleted
-   * 
-   * @param notebook
-   *          notebook to delete
-   */
-  public boolean deleteNotebook(Notebook notebook) {
-    // notebook might be detached, so merge it before.
-    Notebook notebookToDelete = entityManager.merge(notebook);
-    
-    // Delete contained cards
-    List<Card> nbCards = getCardsOfNotebook(notebookToDelete);
-    if (nbCards != null && nbCards.size() > 0) {
-      for (Card currentCard : nbCards) {
-        entityManager.remove(currentCard);
-      }
-    }
-    
-    entityManager.remove(notebookToDelete);
-    
-    return true;
-  }
+	/**
+	 * Deletes the given notebook. If there are cards associated to this
+	 * notebook, these cards first will be deleted
+	 * 
+	 * @param notebook
+	 *            notebook to delete
+	 */
+	public boolean deleteNotebook(Notebook notebook) {
+		// notebook might be detached, so merge it before.
+		Notebook notebookToDelete = entityManager.merge(notebook);
+
+		// Delete contained cards
+		List<Card> nbCards = getCardsOfNotebook(notebookToDelete);
+		if (nbCards != null && nbCards.size() > 0) {
+			for (Card currentCard : nbCards) {
+				entityManager.remove(currentCard);
+			}
+		}
+
+		entityManager.remove(notebookToDelete);
+
+		return true;
+	}
 
 	/**
 	 * Creates or updates the given category to the database
@@ -240,14 +316,14 @@ public class NotesServiceImpl implements Serializable {
 	 * category, these associations first will be removed.
 	 * 
 	 * @param category
-	 *          category to remove
+	 *            category to remove
 	 * @return true, if the category could be removed.
 	 */
 	public boolean deleteCategory(Category category) {
-	  // category might be detached, so merge it before.
-	  Category categoryToDelete = entityManager.merge(category);
-	  
-	  // Remove notebook associations
+		// category might be detached, so merge it before.
+		Category categoryToDelete = entityManager.merge(category);
+
+		// Remove notebook associations
 		List<Notebook> catNotebooks = getAllNotebooks(categoryToDelete);
 		if (catNotebooks != null && catNotebooks.size() > 0) {
 			for (Notebook currentNotebook : catNotebooks) {
@@ -255,7 +331,7 @@ public class NotesServiceImpl implements Serializable {
 				entityManager.merge(currentNotebook);
 			}
 		}
-		
+
 		entityManager.remove(categoryToDelete);
 
 		return true;

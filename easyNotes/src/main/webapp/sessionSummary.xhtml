@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:h="http://java.sun.com/jsf/html">
+<h:head>
+  <h:outputStylesheet library="css" name="style.css" />
+  <title>Summary</title>
+</h:head>
+<h:body>
+  <h1>Summary</h1>
+  <hr />
+  <h:form>
+      
+    <br />
+    <h:panelGrid columns="2" >
+    <h:outputLabel value="Nr of cards to learn :" />
+    <h:outputLabel value="#{cardSlideController.studySession.sessionStatistic.nrOfCards}" />     
+  </h:panelGrid>
+  <h:panelGrid columns="2" >
+    <h:outputLabel value="Answered correct :" />
+    <h:outputLabel value="#{cardSlideController.studySession.sessionStatistic.nrOfCorrect}" />     
+  </h:panelGrid>
+  <h:panelGrid columns="2" >
+    <h:outputLabel value="Answered wrong :" />
+    <h:outputLabel value="#{cardSlideController.studySession.sessionStatistic.nrOfWrong}" />     
+  </h:panelGrid>
+  <h:panelGrid columns="2" >
+    <h:outputLabel value="Not answered :" />
+    <h:outputLabel value="#{cardSlideController.studySession.sessionStatistic.nrOfNotAnswered}" />     
+  </h:panelGrid>  
+    <br />
+
+    <h:commandButton value="Back to cards" action="#{cardSlideController.backToCardList}" />
+    <h:commandButton value="Start over" action="#{cardSlideController.startOver}" rendered="#{cardSlideController.studySession.moreCardsAvailable}" />
+  </h:form>
+  <hr />
+  <i>easyNotes</i>
+</h:body>
+</html>

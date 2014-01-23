@@ -15,17 +15,13 @@ import de.huebner.easynotes.businesslogic.impl.NotesServiceImpl;
 
 /**
  * Controller to manage cards. This includes showing a list of cards for a
- * selected notebook, editing a card and showing a card in slide mode.
+ * selected notebook and editing cards.
  */
 @ManagedBean
 @SessionScoped
 public class CardController implements Serializable {
 
 	private static final long serialVersionUID = -9123720022516582466L;
-	
-	private static final int CARD_SIDE_FRONT = 1;
-	private static final int CARD_SIDE_BACK = 2;
-	private static final int CARD_SIDE_BOTH = 3;
 
 	/**
 	 * The cards are selected for this notebook.
@@ -33,43 +29,8 @@ public class CardController implements Serializable {
 	private Notebook selectedNotebook;
 
 	private Card card;
-	
-	/**
-	 * Header to display in slide mode
-	 */
-	private String cardHeader;
-	
-	/**
-	 * Subheader to display in slide mode
-	 */
-	private String cardSubheader;
-	
-	/**
-	 * Text to display in slide mode
-	 */
-	private String cardText;
-	
-	/**
-	 * Is true, when the subheader for the card should be shown.
-	 */
-	private boolean subheaderShown;
-	
-	/**
-	 * Is true, when the text for the card should be shown.
-	 */
-	private boolean textShown;
-	
-	/**
-	 * nr of the currently displayed card in slide mode
-	 */
-	private int currentSlideNr;
-	
-	/**
-	 * indicator which side of the currently displayed card is shown. front, back or both
-	 */
-	private int currentCardSide;
 
-  @EJB
+	@EJB
 	private NotesServiceImpl notesServiceImpl;
 
 	private List<Card> cardList;
@@ -78,7 +39,7 @@ public class CardController implements Serializable {
 	 * Generated title of page
 	 */
 	private String pageTitle;
-	
+
 	private String nrOfCards;
 
 	private String lastEdited;
@@ -95,8 +56,8 @@ public class CardController implements Serializable {
 
 	/**
 	 * Selects the given notebook to display the cards of it. For this notebook
-	 * the containing cards are selected, a few extra information is selected and
-	 * the page with the cards of the notebook is shown.
+	 * the containing cards are selected, a few extra information is selected
+	 * and the page with the cards of the notebook is shown.
 	 * 
 	 * @return Page to display the cards of the notebook.
 	 */
@@ -137,7 +98,7 @@ public class CardController implements Serializable {
 	 * Edits the selected card.
 	 * 
 	 * @param card
-	 *          card to edit
+	 *            card to edit
 	 * @return Page to edit the card.
 	 */
 	public String editCard(Card card) {
@@ -147,132 +108,20 @@ public class CardController implements Serializable {
 
 		return "editCard.xhtml";
 	}
-	
-  /**
-   * Shows the selected card in a slide mode.
-   * 
-   * @param card
-   *          card to show
-   * @return Page to show a card in a slide mode
-   */
-  public String showCard(Card card) {
-    this.card = card;
-    currentSlideNr = cardList.indexOf(card);
-    currentCardSide = CARD_SIDE_FRONT;
 
-    generateSlideInformation();
+//	/**
+//	 * Shows the selected card in a slide mode.
+//	 * 
+//	 * @param card
+//	 *            card to show
+//	 * @return Page to show a card in a slide mode
+//	 */
+//	public String showCard(Card card) {
+//		cardSlideContainer = new CardSlideContainer(cardList, card);
+//
+//		return "cardSlide.xhtml";
+//	}
 
-    return "cardSlide.xhtml";
-  }
-
-	/**
-	 * Called in slide mode. Shows the previous card of the cardlist.
-	 * 
-	 * @return null to show the current page.
-	 */
-	public String previousCard() {
-		if (currentSlideNr > 0) {
-			currentSlideNr--;
-			card = cardList.get(currentSlideNr);
-			if (currentCardSide != CARD_SIDE_BOTH) {
-			  currentCardSide = CARD_SIDE_FRONT;
-			}
-		}
-
-		generateSlideInformation();
-
-		return null;
-	}
-
-  /**
-   * Called in slide mode. Shows the next card of the cardlist.
-   * 
-   * @return null to show the current page.
-   */
-  public String nextCard() {
-    if (currentSlideNr < cardList.size() - 1) {
-      currentSlideNr++;
-      card = cardList.get(currentSlideNr);
-      if (currentCardSide != CARD_SIDE_BOTH) {
-        currentCardSide = CARD_SIDE_FRONT;
-      }
-    }
-
-    generateSlideInformation();
-
-    return null;
-  }
-	
-  /**
-   * Flips the side of the currently displayed card.
-   * 
-   * @return null to show the current page.
-   */
-  public String flipCard() {
-    if (currentCardSide == CARD_SIDE_FRONT) {
-      currentCardSide = CARD_SIDE_BACK;
-    } else {
-      currentCardSide = CARD_SIDE_FRONT;
-    }
-    
-    generateSlideInformation();
-        
-    return null;
-  }
-  
-	private void generateSlideInformation() {
-		int size = cardList.size();
-		int nr = currentSlideNr + 1;
-		
-		String sideInfo = "";
-		if (currentCardSide == CARD_SIDE_FRONT) {
-      sideInfo = " - front";
-    } else if (currentCardSide == CARD_SIDE_BACK) {
-      sideInfo = " - back";
-    }
-		
-		pageTitle = "Card " + nr + " of " + size + sideInfo;
-		
-
-		String frontText = card.getFrontText();
-    String backText = card.getBackText();
-    if (backText == null) {
-      backText = "";
-    }
-    String text = card.getText();
-    if (text == null) {
-      text = "";
-    }
-    
-		if (currentCardSide == CARD_SIDE_FRONT) {
-		  // Display the fronttext of the card
-		  cardHeader = frontText;
-		  cardSubheader = "";
-		  cardText = "";
-		  
-		  subheaderShown = false;
-      textShown = false;
-		  
-		} else if (currentCardSide == CARD_SIDE_BACK) {
-		  // Display the backtext and the description text of the card
-		  cardHeader = backText;
-      cardSubheader = "";
-      cardText = text;
-      
-      subheaderShown = false;
-      textShown = cardText.length() > 0;
-		  
-		} else {
-		  // Show all information from the card
-		  cardHeader = frontText;
-      cardSubheader = backText;
-      cardText = text;
-      
-      subheaderShown = cardSubheader.length() > 0;
-      textShown = cardText.length() > 0;
-		}
-	}
-  
 	/**
 	 * Persists the edited card and refreshes the cardList. Returns success.
 	 * Success is interpreted to show the cardlist page with the updated card
@@ -286,10 +135,6 @@ public class CardController implements Serializable {
 	}
 
 	public String cancelEdit() {
-		return "cancel";
-	}
-	
-	public String cancelSlideMode() {
 		return "cancel";
 	}
 
@@ -306,7 +151,7 @@ public class CardController implements Serializable {
 
 		return "editCard.xhtml";
 	}
-	
+
 	/**
 	 * Deletes the given card
 	 * 
@@ -320,12 +165,12 @@ public class CardController implements Serializable {
 
 		return null;
 	}
-	
+
 	public String showCardList(boolean refresh) {
 		if (refresh) {
 			retrieveCards();
 		}
-		
+
 		return "listCards.xhtml";
 	}
 
@@ -345,42 +190,6 @@ public class CardController implements Serializable {
 		this.card = card;
 	}
 
-	public String getCardHeader() {
-    return cardHeader;
-  }
-
-  public void setCardHeader(String cardHeader) {
-    this.cardHeader = cardHeader;
-  }
-
-  public String getCardSubheader() {
-    return cardSubheader;
-  }
-
-  public void setCardSubheader(String cardSubheader) {
-    this.cardSubheader = cardSubheader;
-  }
-
-  public String getCardText() {
-    return cardText;
-  }
-
-  public void setCardText(String cardText) {
-    this.cardText = cardText;
-  }
-
-	public boolean getSubheaderShown() {
-		return subheaderShown;
-	}
-
-	public boolean getTextShown() {
-		return textShown;
-	}
-	
-	public int getCurrentCardSide() {
-    return currentCardSide;
-  }
-
 	public Notebook getSelectedNotebook() {
 		return selectedNotebook;
 	}
@@ -399,5 +208,23 @@ public class CardController implements Serializable {
 
 	public String getLastEdited() {
 		return lastEdited;
+	}
+	
+	public String getLastLearnedValue(Card currentCard) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+	    if (currentCard.getLastLearned() != null) {
+	    	return sdf.format(currentCard.getLastLearned());
+	    } 		
+	    
+	    return "";
+	}
+	
+	public String getNextScheduledValue(Card currentCard) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+	    if (currentCard.getNextScheduled() != null) {
+	    	return sdf.format(currentCard.getNextScheduled());
+	    } 		
+	    
+	    return "";
 	}
 }

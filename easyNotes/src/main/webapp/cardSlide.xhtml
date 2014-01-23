@@ -4,30 +4,41 @@
   xmlns:h="http://java.sun.com/jsf/html">
 <h:head>
   <h:outputStylesheet library="css" name="style.css" />
-  <title>#{cardController.pageTitle}</title>
+  <title>#{cardSlideController.pageTitle}</title>
 </h:head>
 <h:body>
-  <h1>#{cardController.pageTitle}</h1>
+  <h1>#{cardSlideController.pageTitle}</h1>
   <hr />
   <h:form>
   
-  	<h:commandButton value="Flip" action="#{cardController.flipCard}" />
+    <h:commandButton value="Wrong" action="#{cardSlideController.answeredWrong}" rendered="#{cardSlideController.canAnswer}" />
+  	<h:commandButton value="Flip" action="#{cardSlideController.flipCard}"  />
+  	<h:commandButton value="Skip" action="#{cardSlideController.skipCard}" rendered="#{cardSlideController.canAnswer}" />
+  	<h:commandButton value="Correct" action="#{cardSlideController.answeredCorrect}" rendered="#{cardSlideController.canAnswer}" />
+  	
   	<br />
+  	<br />
+  	<h:outputText value="#{cardSlideController.cardSlideContainer.cardSide}" />
+  	<br />
+  	<h:outputText value="#{cardSlideController.cardSlideContainer.cardAnswer}" />
+    <br />
     <h:panelGrid columns="3" columnClasses="slide-table-col-button, slide-table-col-text, slide-table-col-button">
-      <h:commandButton value="Prev" action="#{cardController.previousCard}" styleClass="slide-table-button" />
+      <h:commandButton value="Prev" action="#{cardSlideController.previousCard}" styleClass="slide-table-button" disabled="#{cardSlideController.hasNoPreviousCard}"/>
       <h:column>
-        <h:outputText value="#{cardController.cardHeader}" styleClass="slide-header-field" />
+        <h:outputText value="#{cardSlideController.cardSlideContainer.cardHeader}" styleClass="slide-header-field" />
         <br />
-        <h:outputText value="#{cardController.cardSubheader}" rendered="#{cardController.subheaderShown}" styleClass="slide-subheader-field"/>
+        <h:outputText value="#{cardSlideController.cardSlideContainer.cardSubheader}" rendered="#{cardSlideController.cardSlideContainer.subheaderShown}" styleClass="slide-subheader-field"/>
         <br />
-        <h:outputText value="#{cardController.cardText}" rendered="#{cardController.textShown}" styleClass="slide-text-field"/> 
+        <h:outputText value="#{cardSlideController.cardSlideContainer.cardText}" rendered="#{cardSlideController.cardSlideContainer.textShown}" styleClass="slide-text-field"/> 
       </h:column>
-      <h:commandButton value="Next" action="#{cardController.nextCard}" styleClass="slide-table-button" />
+      <h:commandButton value="Next" action="#{cardSlideController.nextCard}" styleClass="slide-table-button" disabled="#{cardSlideController.hasNoNextCard}"/>
     </h:panelGrid>    
 
     <br />
 
-    <h:commandButton value="Back" action="#{cardController.cancelSlideMode}" />    
+    <h:commandButton value="Back" action="#{cardSlideController.backToCardList}" />
+    <h:commandButton value="Stop Session" action="#{cardSlideController.stopSession}" rendered="#{cardSlideController.isStudyMode}"/>
+    <h:outputText value="All cards studied" rendered="#{cardSlideController.showAllCardsStudied}" />    
   </h:form>
   <hr />
   <i>easyNotes</i>

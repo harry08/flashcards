@@ -29,6 +29,34 @@ h1 {
 	border-top:1px solid #BBBBBB;
 }
 
+.id-col{
+  width:40px;
+}
+
+.fronttext-col{
+	width:180px;
+}
+
+.backtext-col{
+  width:250px;
+}
+
+.generaltext-col{
+  width:220px;
+}
+
+.date-col{
+  width:130px;
+}
+
+.progress-col{
+  width:70px;
+}
+
+.action-col{
+  width:65px;
+}
+
 .edit-grid-label-col{ 
 	width: 120px;
 }
