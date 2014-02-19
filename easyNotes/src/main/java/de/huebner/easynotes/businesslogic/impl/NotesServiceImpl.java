@@ -14,12 +14,13 @@ import de.huebner.easynotes.businesslogic.NotesServiceBusinessException;
 import de.huebner.easynotes.businesslogic.data.Card;
 import de.huebner.easynotes.businesslogic.data.Category;
 import de.huebner.easynotes.businesslogic.data.Notebook;
+import de.huebner.easynotes.businesslogic.io.CardCreator;
 import de.huebner.easynotes.businesslogic.io.CardExportData;
 import de.huebner.easynotes.businesslogic.io.CardsExporter;
-import de.huebner.easynotes.businesslogic.io.CardsImporter;
+import de.huebner.easynotes.businesslogic.io.CsvImporter;
 import de.huebner.easynotes.businesslogic.io.CardsImporterException;
+import de.huebner.easynotes.businesslogic.io.ImportObjectCreator;
 import de.huebner.easynotes.businesslogic.study.LearnProgressCalculator;
-import de.huebner.easynotes.businesslogic.study.LearnProgressCalculator.LearnProgress;
 import de.huebner.easynotes.businesslogic.study.SessionStatistic;
 
 /**
@@ -39,11 +40,10 @@ public class NotesServiceImpl implements Serializable {
 		Date modificationDate = new Date();
 		if (insert) {
 			card.setCreated(modificationDate);
-			card.setNextScheduled(modificationDate);
-		} else {
 			if (card.getNextScheduled() == null) {
+				card.setNextScheduled(modificationDate);
 			}
-		}
+		} 
 		card.setModified(modificationDate);
 	}
 
@@ -350,13 +350,37 @@ public class NotesServiceImpl implements Serializable {
 	public int importCards(String importString, Notebook notebook)
 			throws NotesServiceBusinessException {
 		// Extract cards out of the input string
-		CardsImporter cardsImporter = new CardsImporter();
+		CsvImporter cardsImporter = new CsvImporter();
+		ImportObjectCreator cardCreator = new CardCreator();
+		cardsImporter.setObjectCreator(cardCreator);
+
 		List<Card> cardList;
 		try {
 			cardList = cardsImporter.interpretInputString(importString);
 		} catch (CardsImporterException cie) {
 			cie.printStackTrace();
-			throw new NotesServiceBusinessException("Error reading the input data: " + cie.getMessage());
+			int errorCode = NotesServiceBusinessException.ERROR_IMPORT_GENERAL;
+			String detail1 = "";
+			String detail2 = "";
+			if (cie.getErrorCode() == CardsImporterException.UNEXPECTED_HEADER) {
+				errorCode = NotesServiceBusinessException.ERROR_IMPORT_WRONG_HEADER;
+				detail1 = cie.getValue();
+			} else if (cie.getErrorCode() == CardsImporterException.UNEXPECTED_FIELD) {
+				errorCode = NotesServiceBusinessException.ERROR_IMPORT_UNEXPECTED_FIELD;
+				detail1 = cie.getField();
+				detail2 = cie.getValue();
+			} else if (cie.getErrorCode() == CardsImporterException.FORMAT_ERROR) {
+				errorCode = NotesServiceBusinessException.ERROR_IMPORT_WRONG_FORMAT;
+				detail1 = cie.getField();
+				detail2 = cie.getValue();
+			} else if (cie.getErrorCode() == CardsImporterException.MORE_FIELDS) {
+				errorCode = NotesServiceBusinessException.ERROR_IMPORT_MORE_FIELDS_THAN_EXPECTED;
+				detail1 = cie.getValue();
+			}
+
+			throw new NotesServiceBusinessException(
+					"Error reading the input data: " + cie.getMessage(),
+					errorCode, detail1, detail2);
 		}
 
 		// Bulk insert all cards
@@ -381,21 +405,28 @@ public class NotesServiceImpl implements Serializable {
 	 * Exports the cards of the given notebook to a string.
 	 * 
 	 * @param notebook
-	 *          Notebook from which the cards are exported
+	 *            Notebook from which the cards are exported
 	 * @param exportType
 	 * @param wordDelimiter
-	 *          delimiter for words
+	 *            delimiter for words
 	 * @param recordDelimiter
-	 *          delimiter for a whole record
+	 *            delimiter for a whole record
+	 * @param quoteDelimiter
+	 *            should be set true for exporting csv files. Words having
+	 *            delimiter symbols in their text will be double quoted in the
+	 *            export string.
+	 * @param containsHeader
+	 *            should be true if a header line should be included in the
+	 *            export string.
 	 * @return Exported data. Contains String and nr of records in this string.
 	 */
-	public CardExportData exportCards(Notebook notebook, int exportType, String wordDelimiter,
-			String recordDelimiter) {
+	public CardExportData exportCards(Notebook notebook, int exportType,
+			String wordDelimiter, String recordDelimiter, boolean quoteDelimiter, boolean containsHeader) {
 		CardsExporter cardsExporter = new CardsExporter();
 		List<Card> cards = getCardsOfNotebook(notebook);
 
-		CardExportData exportData = cardsExporter.generateExportString(cards, exportType,
-				wordDelimiter, recordDelimiter);
+		CardExportData exportData = cardsExporter.generateExportString(cards,
+				exportType, wordDelimiter, recordDelimiter, quoteDelimiter, containsHeader);
 
 		return exportData;
 	}

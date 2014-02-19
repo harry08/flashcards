@@ -22,8 +22,18 @@
 				<f:selectItem itemValue="3" itemLabel="Backtext - Fronttext" />
 				<f:selectItem itemValue="4"
 					itemLabel="Fronttext - Backtext and Description" />
+				<f:selectItem itemValue="5" itemLabel="All fields" />
 			</h:selectOneMenu>
 		</h:panelGrid>
+		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">
+      <h:outputLabel value="Format :" />
+      
+			<h:selectOneRadio value="#{cardExportController.exportFormat}" layout="pageDirection">
+				<f:selectItem itemValue="csv" itemLabel="CSV" />
+				<f:selectItem itemValue="custom" itemLabel="Custom" />
+			</h:selectOneRadio>
+		</h:panelGrid>
+		
 		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">
 			<h:outputLabel value="Word delimiter :" />
 			<h:inputText value="#{cardExportController.wordDelimiter}" size="20" />

@@ -15,9 +15,13 @@ public class CardsExporterTest {
 
 	private CardsExporter cardsExporter;
 
-	private static final String WORD_DEL = "<WORD>";
+	private static final String WORD_DEL_CUSTOM = "<WORD>";
 
-	private static final String RECORD_DEL = "<RECORD>";
+	private static final String RECORD_DEL_CUSTOM = "<RECORD>";
+	
+	private static final String WORD_DEL_CSV = CommonConstants.SEMICOLON;
+
+	private static final String RECORD_DEL_CSV = CommonConstants.END_OF_LINE;
 
 	@Before
 	public void setup() {
@@ -25,7 +29,7 @@ public class CardsExporterTest {
 	}
 
 	/**
-	 * Tests exporting a list of cards. The exportstring should be created
+	 * Tests exporting a list of cards. The export string should be created
 	 * successfully.
 	 */
 	@Test
@@ -43,21 +47,79 @@ public class CardsExporterTest {
 		card2.setBackText("Back2");
 		card2.setText("Text2");
 		cardList.add(card2);
-		
+
 		Card card3 = new Card();
 		card3.setFrontText("Front3");
 		card3.setBackText("Back3 - Without descriptiontext");
 		cardList.add(card3);
 
-		CardExportData exportData = cardsExporter.generateExportString(cardList, CommonConstants.EXPORTTYPE_FRONT_BACKDESC, WORD_DEL,
-				RECORD_DEL);
+		CardExportData exportData = cardsExporter.generateExportString(
+				cardList, CommonConstants.EXPORTTYPE_FRONT_BACKDESC,
+				WORD_DEL_CUSTOM, RECORD_DEL_CUSTOM, false, true);
 		assertEquals(3, exportData.getNrOfCards());
 		String exportedString = exportData.getExportString();
 		// Test occurrences of RECORD_DEL
-		int countRecords = countDelimiter(exportedString, RECORD_DEL);
-		assertEquals(3, countRecords);
+		int countRecords = countDelimiter(exportedString, RECORD_DEL_CUSTOM);
+		assertEquals(4, countRecords);
 		// Test occurrences of specific Strings
-		assertEquals(true, exportedString.contains("Front3<WORD>Back3 - Without descriptiontext<RECORD>"));
+		assertEquals(
+				true,
+				exportedString
+						.contains("Front3<WORD>Back3 - Without descriptiontext<RECORD>"));
+	}
+
+	/**
+	 * Tests exporting a card with a backtext containing a double-quote. The
+	 * resulting string is supposed to be double-quoted.
+	 */
+	@Test
+	public void shouldExportCardWithDoubleQuoteInText() {
+		List<Card> cardList = new ArrayList<Card>();
+
+		Card card1 = new Card();
+		card1.setFrontText("Front1");
+		String backtext = "Backtext1 with doublequote " + "\"" + " in text.";
+		card1.setBackText(backtext);
+		card1.setText("Text1");
+		cardList.add(card1);
+
+		CardExportData exportData = cardsExporter.generateExportString(
+				cardList, CommonConstants.EXPORTTYPE_STANDARD, WORD_DEL_CUSTOM,
+				RECORD_DEL_CUSTOM, true, false);
+
+		assertEquals(1, exportData.getNrOfCards());
+		String exportedString = exportData.getExportString();
+		String expectedString = CommonConstants.DOUBLE_QUOTE
+				+ "Backtext1 with doublequote "
+				+ CommonConstants.MASEKD_DOUBLE_QUOTE + " in text."
+				+ CommonConstants.DOUBLE_QUOTE;
+		assertEquals(true, exportedString.contains(expectedString));
+	}
+	
+	/**
+	 * Tests exporting a card with a backtext containing a delimiter. The
+	 * resulting string is supposed to be double-quoted.
+	 */
+	@Test
+	public void shouldExportCardWithDelimiterInText() {
+		List<Card> cardList = new ArrayList<Card>();
+		
+		Card card1 = new Card();
+		card1.setFrontText("Front1");
+		String backtext = "Backtext1 with delimiter " + RECORD_DEL_CSV + " in text.";
+		card1.setBackText(backtext);
+		card1.setText("Text1");
+		cardList.add(card1);
+		
+		CardExportData exportData = cardsExporter.generateExportString(
+				cardList, CommonConstants.EXPORTTYPE_STANDARD, WORD_DEL_CSV,
+				RECORD_DEL_CSV, true, false);
+
+		assertEquals(1, exportData.getNrOfCards());
+		String exportedString = exportData.getExportString();
+		String expectedString = CommonConstants.DOUBLE_QUOTE + backtext
+				+ CommonConstants.DOUBLE_QUOTE;
+		assertEquals(true, exportedString.contains(expectedString));
 	}
 
 	/**

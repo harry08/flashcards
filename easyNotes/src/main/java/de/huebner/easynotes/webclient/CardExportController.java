@@ -28,11 +28,22 @@ public class CardExportController implements Serializable {
 	private String exportString = "";
 
 	/**
-	 * Represents the mode, how the data is being exported. i.e. which fields will
-	 * be in the output. Is filled over the selectOneMenu.
+	 * Represents the mode, how the data is being exported. i.e. which fields
+	 * will be in the output. Is filled over the selectOneMenu.
 	 */
 	private String exportMode = "";
 
+	/**
+	 * Represents the format used to export the cards. Either csv or custom with
+	 * selfdefinied delimiter.
+	 */
+	private String exportFormat = "";
+	
+	/**
+	 * Flag to control if a header line should be included in the export string.
+	 */
+	private boolean containsHeader;
+	
 	private String wordDelimiter;
 
 	private String recordDelimiter;
@@ -50,8 +61,22 @@ public class CardExportController implements Serializable {
 	 * @return
 	 */
 	public String exportCards() {
-		CardExportData cardExportData = notesServiceImpl.exportCards(selectedNotebook,
-				getExportModeValue(), wordDelimiter, recordDelimiter);
+		String wordDel;
+		String recordDel;
+		boolean quoteDelimiter;
+
+		if (exportFormat.equals("csv")) {
+			wordDel = CommonConstants.SEMICOLON;
+			recordDel = CommonConstants.END_OF_LINE;
+			quoteDelimiter = true;
+		} else {
+			wordDel = wordDelimiter;
+			recordDel = recordDelimiter;
+			quoteDelimiter = false;
+		}
+
+		CardExportData cardExportData = notesServiceImpl.exportCards(
+				selectedNotebook, getExportModeValue(), wordDel, recordDel, quoteDelimiter, containsHeader);
 		exportString = cardExportData.getExportString();
 
 		int count = cardExportData.getNrOfCards();
@@ -63,7 +88,8 @@ public class CardExportController implements Serializable {
 		} else {
 			message = "No cards exported";
 		}
-		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(message));
+		FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(message));
 
 		return "cardExport.xhmtl";
 	}
@@ -75,6 +101,8 @@ public class CardExportController implements Serializable {
 			return CommonConstants.EXPORTTYPE_BACKFRONT;
 		} else if (exportMode.equals("4")) {
 			return CommonConstants.EXPORTTYPE_FRONT_BACKDESC;
+		} else if (exportMode.equals("5")) {
+			return CommonConstants.EXPORTTYPE_ALL_FIELDS;
 		} else {
 			return CommonConstants.EXPORTTYPE_STANDARD;
 		}
@@ -89,7 +117,9 @@ public class CardExportController implements Serializable {
 		this.selectedNotebook = notebook;
 		exportString = "";
 		// Preset values
-		exportMode = "1";
+		exportMode = "1";  // Standard fieldset with fronttext, backtext and description
+		containsHeader = true;
+		exportFormat = "custom";
 		wordDelimiter = "<WORD>";
 		recordDelimiter = "<END>";
 
@@ -147,5 +177,13 @@ public class CardExportController implements Serializable {
 
 	public void setCardController(CardController cardController) {
 		this.cardController = cardController;
+	}
+
+	public String getExportFormat() {
+		return exportFormat;
+	}
+
+	public void setExportFormat(String exportFormat) {
+		this.exportFormat = exportFormat;
 	}
 }
