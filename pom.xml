@@ -14,8 +14,8 @@
   </parent>
   
   <modules>
-    <module>/easyNotesBuildRoot</module>
-    <module>/easyNotes</module>
+    <module>../easyNotesBuildRoot</module>
+    <module>../easyNotes</module>
   </modules>
   
 </project>
