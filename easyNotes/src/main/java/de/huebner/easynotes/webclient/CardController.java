@@ -2,12 +2,14 @@ package de.huebner.easynotes.webclient;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.event.ValueChangeEvent;
 
 import de.huebner.easynotes.businesslogic.data.Card;
 import de.huebner.easynotes.businesslogic.data.Notebook;
@@ -35,6 +37,13 @@ public class CardController implements Serializable {
 
 	private List<Card> cardList;
 
+	private String selectedFilterId = String.valueOf(-1);
+	
+	/**
+	 * List with filter entries to select in the dropdown box
+	 */
+	private List<SelectableItem> filterSelectItems;
+
 	/**
 	 * Generated title of page
 	 */
@@ -43,6 +52,8 @@ public class CardController implements Serializable {
 	private String nrOfCards;
 
 	private String lastEdited;
+	
+	private String lastStudied;
 
 	private String parentPage = "listNotebooks.xhtml";
 
@@ -78,20 +89,79 @@ public class CardController implements Serializable {
 	}
 
 	private void calculatetLastEdited() {
+		lastEdited = "";
+		lastStudied = "";
+		
 		if (cardList.size() > 0) {
-			Date newestDate = cardList.get(0).getModified();
+			Date newestEditDate = cardList.get(0).getModified();
+			Date newestStudyDate = cardList.get(0).getLastLearned();
+			if (newestStudyDate == null) {
+				newestStudyDate = new Date(0);
+			}
 			for (int i = 1; i < cardList.size(); i++) {
-				Date compareDate = cardList.get(i).getModified();
-				if (newestDate.compareTo(compareDate) < 0) {
-					newestDate = compareDate;
+				Date compareEditDate = cardList.get(i).getModified();
+				if (newestEditDate.compareTo(compareEditDate) < 0) {
+					newestEditDate = compareEditDate;
+				}
+				
+				Date compareStudyDate = cardList.get(i).getLastLearned();
+				if (compareStudyDate == null) {
+					compareStudyDate = new Date(0);
+				}
+				if (newestStudyDate.compareTo(compareStudyDate) < 0) {
+					newestStudyDate = compareStudyDate;
 				}
 			}
 
 			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-			lastEdited = sdf.format(newestDate);
-		} else {
-			lastEdited = "";
+			lastEdited = sdf.format(newestEditDate);
+			
+			if (newestStudyDate.getTime() > 0) {
+				lastStudied = sdf.format(newestStudyDate);
+			}			
 		}
+	}
+	
+	/**
+	 * Returns a list with items to display in the filter dropdown
+	 * element.
+	 * 
+	 * @return list with SelectableItems
+	 */
+	public List<SelectableItem> getFilterSelectItems() {
+		if (filterSelectItems == null) {
+			filterSelectItems = new ArrayList<SelectableItem>(7);
+			
+			filterSelectItems.add(new SelectableItem(-1, "Not filtered"));
+			filterSelectItems.add(new SelectableItem(1, "Answered wrong"));
+			filterSelectItems.add(new SelectableItem(2, "Answered correct"));
+			filterSelectItems.add(new SelectableItem(3, "Recently studied"));
+			filterSelectItems.add(new SelectableItem(4, "Lesson"));
+			filterSelectItems.add(new SelectableItem(5, "Recently added"));
+			filterSelectItems.add(new SelectableItem(6, "REcently modified"));		
+		}
+
+		return filterSelectItems;
+	}
+	
+	/**
+	 * Change method for filter dropdown. The cardlist is updated.
+	 * 
+	 * @param e
+	 *            event
+	 */
+	public void filterListChanged(ValueChangeEvent e) {
+		selectedFilterId = e.getNewValue().toString();
+
+		retrieveCards();
+	}
+	
+	public String getFilter() {
+		return selectedFilterId;
+	}
+	
+	public void setFilter(String filter) {
+		this.selectedFilterId = filter;
 	}
 
 	/**
@@ -108,19 +178,6 @@ public class CardController implements Serializable {
 
 		return "editCard.xhtml";
 	}
-
-//	/**
-//	 * Shows the selected card in a slide mode.
-//	 * 
-//	 * @param card
-//	 *            card to show
-//	 * @return Page to show a card in a slide mode
-//	 */
-//	public String showCard(Card card) {
-//		cardSlideContainer = new CardSlideContainer(cardList, card);
-//
-//		return "cardSlide.xhtml";
-//	}
 
 	/**
 	 * Persists the edited card and refreshes the cardList. Returns success.
@@ -208,6 +265,10 @@ public class CardController implements Serializable {
 
 	public String getLastEdited() {
 		return lastEdited;
+	}
+	
+	public String getLastStudied() {
+		return lastStudied;
 	}
 	
 	public String getLastLearnedValue(Card currentCard) {

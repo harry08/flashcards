@@ -17,9 +17,23 @@
 		<h:outputLabel value="Last edited :" />
 		<h:outputText value="#{cardController.lastEdited}" />
 	</h:panelGrid>
-
-	<hr />
+	<h:panelGrid columns="2">
+    <h:outputLabel value="Last studied :" />
+    <h:outputText value="#{cardController.lastStudied}" />
+  </h:panelGrid>
+  <hr />
+    
 	<h:form>
+    <h:panelGrid columns="2" >
+      <h:outputLabel value="Filter :" />
+      <h:selectOneMenu value="#{cardController.filter}"
+        onchange="submit()" valueChangeListener="#{cardController.filterListChanged}">
+        <f:selectItems value="#{cardController.filterSelectItems}"
+          var="item" itemLabel="#{item.title}" itemValue="#{item.itemId}" />
+      </h:selectOneMenu>      
+    </h:panelGrid>
+    <br />
+    
 		<h:dataTable styleClass="general-table"
 			headerClass="general-table-header"
 			rowClasses="general-table-odd-row,general-table-even-row"
