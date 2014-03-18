@@ -8,7 +8,7 @@
 		<packaging>war</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <name>easyNotes</name>
-    <description>Main project easyNotes</description>
+    <description>Main project with easyNotes webapplication</description>
 
     <parent>
         <groupId>de.huebner.easynotes</groupId>
