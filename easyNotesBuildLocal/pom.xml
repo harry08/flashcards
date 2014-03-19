@@ -7,15 +7,10 @@
   <name>easyNotes BuildLocal</name>
   <description>Build project for building in a local environment  </description>
   
-  <parent>
-    <groupId>de.huebner.easynotes</groupId>
-    <artifactId>buildroot</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-  </parent>
   
   <modules>
-    <module>/../easyNotesBuildRoot</module>
-    <module>/../easyNotes</module>    
+    <module>easyNotesBuildRoot</module>
+    <module>easyNotes</module>    
   </modules>
   
 </project>
