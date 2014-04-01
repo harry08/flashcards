@@ -29,31 +29,38 @@ public class LearnProgressCalculator {
 		int maxCompartment = getMaxCompartment();
 		LearnProgress progress = new LearnProgress();
 
-		Date referenceDate = lastLearned;
+		Date referenceDate;
+		if (lastLearned != null) {
+			referenceDate = lastLearned;
+		} else {
+			referenceDate = new Date();
+		}
 
-		if (currentAnswer != Card.NO_ANSWER) {
-			boolean calculateNextScheduled = true;
+		boolean calculateNextScheduled = true;
 
-			if (currentAnswer == Card.ANSWER_CORRECT) {
-				if (nrCorrectAnswers > maxNrOfCorrectAnswers()) {
-					// The card is already in the highest compartment and
-					// therefore not scheduled anymore
-					progress.setCompartment(maxCompartment);
-					progress.setNextScheduled(null);
-					calculateNextScheduled = false;
-				} else {
-					// Put the card in the next compartment
-					progress.setCompartment(nrCorrectAnswers);
-				}
+		if (currentAnswer == Card.ANSWER_CORRECT) {
+			if (nrCorrectAnswers >= maxNrOfCorrectAnswers()) {
+				// The card is already in the highest compartment and
+				// therefore not scheduled anymore
+				progress.setCompartment(maxCompartment);
+				progress.setNextScheduled(null);
+				calculateNextScheduled = false;
 			} else {
-				// Card answered wrong. Put the card in the first compartment
-				progress.setCompartment(0);
+				// Put the card in the next compartment
+				progress.setCompartment(nrCorrectAnswers);
 			}
+		} else if (currentAnswer == Card.ANSWER_WRONG) {
+			// Card answered wrong. Put the card in the first compartment
+			progress.setCompartment(0);
+		} else if (currentAnswer == Card.NO_ANSWER) {
+			// Card not answered (i.e. reset). Put the card in the first
+			// compartment
+			progress.setCompartment(0);
+		}
 
-			if (calculateNextScheduled) {
-				progress.setNextScheduled(calculateNextScheduled(
-						progress.getCompartment(), referenceDate));
-			}
+		if (calculateNextScheduled) {
+			progress.setNextScheduled(calculateNextScheduled(
+					progress.getCompartment(), referenceDate));
 		}
 
 		return progress;

@@ -1,6 +1,7 @@
 package de.huebner.easynotes.webclient;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -33,6 +34,12 @@ public class CategoryController implements Serializable {
 	
 	private String editTitle;
 	
+	private String created;
+	
+	private String lastEdited;
+	
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+	
 	/**
 	 * Indicates that the user has changed category data on this page.  
 	 */
@@ -57,10 +64,11 @@ public class CategoryController implements Serializable {
 	 * @return Page to edit the category.
 	 */
 	public String editCategory(Category category) {
-		System.out.println("editCategory with category called. Category: " + category);
 		this.category = category;
 		
 		editTitle = "Edit category";
+		created = sdf.format(category.getCreated());
+		lastEdited = sdf.format(category.getModified());
 
 		return "editCategory.xhtml";
 	}
@@ -147,6 +155,14 @@ public class CategoryController implements Serializable {
 
 	public String getEditTitle() {
 		return editTitle;
+	}
+	
+	public String getCreated() {
+		return created;
+	}
+	
+	public String getLastEdited() {
+		return lastEdited;
 	}
 	
 	/**

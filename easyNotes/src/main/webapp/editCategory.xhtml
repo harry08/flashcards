@@ -8,6 +8,14 @@
 </h:head>
 <h:body>
 	<h1>#{categoryController.editTitle}</h1>
+	<h:panelGrid columns="2">
+    <h:outputLabel value="Created :" />
+    <h:outputText value="#{categoryController.created}" />
+  </h:panelGrid>
+  <h:panelGrid columns="2">
+    <h:outputLabel value="Last edited :" />
+    <h:outputText value="#{categoryController.lastEdited}" />
+  </h:panelGrid>
 	<hr />
 	<h:form>
 		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">

@@ -2,7 +2,9 @@ package de.huebner.easynotes.businesslogic.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -22,6 +24,7 @@ import de.huebner.easynotes.businesslogic.io.CardsImporterException;
 import de.huebner.easynotes.businesslogic.io.ImportObjectCreator;
 import de.huebner.easynotes.businesslogic.study.LearnProgressCalculator;
 import de.huebner.easynotes.businesslogic.study.SessionStatistic;
+import de.huebner.easynotes.common.CommonConstants;
 
 /**
  * Facade for accessing the notes database. Includes business logic.
@@ -130,6 +133,20 @@ public class NotesServiceImpl implements Serializable {
 
 		return result;
 	}
+	
+	public Card getCard(long id) {
+		Query query = entityManager.createNamedQuery("Card.findCardWithId");
+		query.setParameter("id", id);
+		
+		// Perform Query
+		@SuppressWarnings("unchecked")
+		List<Card> result = query.getResultList();
+		if (result.size() == 1) {
+			return result.get(0);
+		}
+				
+		return null;
+	}
 
 	/**
 	 * Returns a list of all cards of a notebook.
@@ -141,6 +158,58 @@ public class NotesServiceImpl implements Serializable {
 	public List<Card> getCardsOfNotebook(Notebook notebook) {
 		Query query = entityManager.createNamedQuery("Card.findCardsOfNotebook");
 		query.setParameter("notebook", notebook);
+
+		// Perform Query
+		@SuppressWarnings("unchecked")
+		List<Card> result = query.getResultList();
+
+		return result;
+	}
+	
+	/**
+	 * Returns a filtered list of all cards of a notebook.
+	 * 
+	 * @param notebook
+	 *            notebook from which the cards should be returned
+	 * @param filter
+	 *            filter to use to select the cards
+	 * @return list with cards
+	 */
+	public List<Card> getCardsOfNotebook(Notebook notebook, int filter) {
+		Calendar recentCal = new GregorianCalendar();
+		recentCal.add(Calendar.DATE, -2);
+		
+		Query query = null;
+		
+		if (filter == CommonConstants.FILTER_ANSWER_WRONG || filter == CommonConstants.FILTER_ANSWER_CORRECT) {
+			query = entityManager.createNamedQuery("Card.findAnsweredCardsOfNotebook");
+			query.setParameter("notebook", notebook);
+			if (filter == CommonConstants.FILTER_ANSWER_WRONG) {
+				query.setParameter("answer", Card.ANSWER_WRONG);
+			} else {
+				query.setParameter("answer", Card.ANSWER_CORRECT);
+			}
+		} else if (filter == CommonConstants.FILTER_LESSON) {
+			query = entityManager.createNamedQuery("Card.findCardsForLesson");
+			query.setParameter("notebook", notebook);
+			query.setParameter("nextScheduled", new Date());
+		} else if (filter == CommonConstants.FILTER_RECENT_ADD) {
+			query = entityManager.createNamedQuery("Card.findAnsweredCardsOfNotebookRecentAdded");
+			query.setParameter("notebook", notebook);
+			query.setParameter("created", recentCal.getTime());
+		} else if (filter == CommonConstants.FILTER_RECENT_MODIFIED) {
+			query = entityManager.createNamedQuery("Card.findAnsweredCardsOfNotebookRecentModified");
+			query.setParameter("notebook", notebook);
+			query.setParameter("modified", recentCal.getTime());
+		} else if (filter == CommonConstants.FILTER_RECENT_STUDY) {
+			query = entityManager.createNamedQuery("Card.findCardsOfNotebookRecentStudied");
+			query.setParameter("notebook", notebook);
+			query.setParameter("lastLearned", recentCal.getTime());
+		} else {
+			// not filtered
+			query = entityManager.createNamedQuery("Card.findCardsOfNotebook");
+			query.setParameter("notebook", notebook);
+		}
 
 		// Perform Query
 		@SuppressWarnings("unchecked")
@@ -201,7 +270,8 @@ public class NotesServiceImpl implements Serializable {
 		LearnProgressCalculator calculator = new LearnProgressCalculator();
 
 		for (Card currentCard : studiedCards) {
-			if (currentCard.isAnswered()) {
+			//if (currentCard.isAnswered()) {
+			if (currentCard.isStudied()) {
 				// Calculate learn progress
 				LearnProgressCalculator.LearnProgress progress = calculator
 						.calculate(currentCard.getLastLearned(),

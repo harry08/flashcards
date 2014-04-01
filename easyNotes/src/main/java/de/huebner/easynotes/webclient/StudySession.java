@@ -15,8 +15,9 @@ import de.huebner.easynotes.businesslogic.study.SessionStatistic;
  */
 public class StudySession {
 
-	private final static int PROCEDURE_RANDOM = 1;
+	private final static int PROCEDURE_LESSON_RANDOM = 1;
 	private final static int PROCEDURE_LESSON = 2;
+	private final static int PROCEDURE_GIVENLIST = 2;
 
 	private List<Card> cardList;
 
@@ -37,6 +38,8 @@ public class StudySession {
 	private Notebook selectedNotebook;
 
 	private NotesServiceImpl notesService;
+	
+	private boolean changed;
 
 	public StudySession(NotesServiceImpl notesService, Notebook notebook) {
 		this.notesService = notesService;
@@ -46,6 +49,19 @@ public class StudySession {
 		retrieveNextCards();
 		sessionFinished = false;
 		moreCardsAvailable = false;
+		changed = false;
+	}
+	
+	public StudySession(NotesServiceImpl notesService, List<Card> cardList) {
+		this.notesService = notesService;
+		studyProcedure = PROCEDURE_GIVENLIST;
+		selectedNotebook = null;
+		
+		this.cardList = cardList;
+		sessionFinished = false;
+		moreCardsAvailable = false;
+		clearLastAnswer();
+		changed = false;
 	}
 
 	/**
@@ -55,7 +71,7 @@ public class StudySession {
 		if (selectedNotebook != null) {
 			cardList = notesService.getCardsForLesson(selectedNotebook, maxCards); 	
 			
-			if (studyProcedure == PROCEDURE_RANDOM) {
+			if (studyProcedure == PROCEDURE_LESSON_RANDOM) {
 	            // Shuffle cards list.
 	            Collections.shuffle(cardList);
 	        }
@@ -65,11 +81,12 @@ public class StudySession {
 	}
 	
 	/**
-	 * Clears the last answer of the cards in the list.
+	 * Resets the study info of all the cards in the list.
+	 * For this the last answer is cleared and the studied flag is set to false.
 	 */
 	private void clearLastAnswer() {
 		for (Card currentCard : cardList) {
-			currentCard.clearAnswer();
+			currentCard.resetCurrentStudyInfo();
 		}
 	}
 
@@ -81,6 +98,7 @@ public class StudySession {
 		cardList = new ArrayList<Card>(0);
 		sessionFinished = true;
 		moreCardsAvailable = false;
+		changed = false;
 	}
 
 	public List<Card> getCardList() {
@@ -105,13 +123,14 @@ public class StudySession {
 	}
 
 	/**
-	 * Checks if cards has been answered.
+	 * Checks if cards has been stuedied.
 	 * 
 	 * @return true, if at least one of the Cards is answered.
 	 */
 	public boolean isChanged() {
+		// return changed;
 		for (Card currentCard : cardList) {
-			if (currentCard.isAnswered()) {
+			if (currentCard.isStudied()) {
 				return true;
 			}
 		}
@@ -128,7 +147,7 @@ public class StudySession {
 	 * @return true, if more cards are available. False otherwise.
 	 */
 	private boolean hasMoreCards() {
-		if (studyProcedure == PROCEDURE_RANDOM
+		if (studyProcedure == PROCEDURE_LESSON_RANDOM
 			|| studyProcedure == PROCEDURE_LESSON) {
 
 			List<Card> tempList = notesService
@@ -169,6 +188,7 @@ public class StudySession {
 		if (!isInit()) {
 			retrieveNextCards();
 			sessionFinished = false;
+			changed = false;
 			moreCardsAvailable = false;
 			sessionStatistic = null;			
 		}
@@ -176,8 +196,31 @@ public class StudySession {
 	
 	public void answeredCorrect(Card card) {
 		if (card != null) {
-			card.setAnsweredCorrect();
-			card.setLastLearned(new Date());
+			int maxAnswer = 9;
+			if (card.getNrOfCorrect() < maxAnswer) {
+				card.setAnsweredCorrect();
+				card.setLastLearned(new Date());
+				changed = true;
+			}
+		}
+	}
+	
+	public void markAsLearned(Card card) {
+		if (card != null) {
+			int maxAnswer = 9;
+			if (card.getNrOfCorrect() < maxAnswer) {
+				card.markAsLearned(maxAnswer);
+				card.setLastLearned(new Date());
+				changed = true;
+			}
+		}
+	}
+	
+	public void resetProgress(Card card) {
+		if (card != null) {
+			card.resetProgress();
+			card.setLastLearned(null);
+			changed = true;
 		}
 	}
 
@@ -185,6 +228,7 @@ public class StudySession {
 		if (card != null) {
 			card.setAnsweredWrong();
 			card.setLastLearned(new Date());
+			changed = true;
 		}
 	}
 	

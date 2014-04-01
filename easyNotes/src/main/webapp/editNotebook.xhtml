@@ -9,6 +9,14 @@
 </h:head>
 <h:body>
 	<h1>#{notebookController.editTitle}</h1>
+	<h:panelGrid columns="2">
+    <h:outputLabel value="Created :" />
+    <h:outputText value="#{notebookController.created}" />
+  </h:panelGrid>
+  <h:panelGrid columns="2">
+    <h:outputLabel value="Last edited :" />
+    <h:outputText value="#{notebookController.lastEdited}" />
+  </h:panelGrid>
 	<hr />
 	<h:form>
 		<h3>Notebook</h3>

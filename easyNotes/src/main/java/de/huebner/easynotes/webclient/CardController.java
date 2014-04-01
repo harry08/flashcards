@@ -14,6 +14,7 @@ import javax.faces.event.ValueChangeEvent;
 import de.huebner.easynotes.businesslogic.data.Card;
 import de.huebner.easynotes.businesslogic.data.Notebook;
 import de.huebner.easynotes.businesslogic.impl.NotesServiceImpl;
+import de.huebner.easynotes.common.CommonConstants;
 
 /**
  * Controller to manage cards. This includes showing a list of cards for a
@@ -51,11 +52,15 @@ public class CardController implements Serializable {
 
 	private String nrOfCards;
 
+	private String created;
+	
 	private String lastEdited;
 	
 	private String lastStudied;
 
 	private String parentPage = "listNotebooks.xhtml";
+	
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
 	public List<Card> getCardList() {
 		if (cardList == null) {
@@ -74,21 +79,29 @@ public class CardController implements Serializable {
 	 */
 	public String selectNotebook(Notebook notebook) {
 		this.selectedNotebook = notebook;
+		selectedFilterId = String.valueOf(-1);
 		retrieveCards();
 
 		return "listCards.xhmtl";
 	}
 
 	/**
-	 * Refreshes the attributes of this Controller
+	 * Retrieves the cards and publishes the attribute cardList.
 	 */
 	private void retrieveCards() {
-		cardList = notesServiceImpl.getCardsOfNotebook(selectedNotebook);
+		int filterId = Integer.valueOf(selectedFilterId);
+		if (filterId == -1) {
+			cardList = notesServiceImpl.getCardsOfNotebook(selectedNotebook);
+		} else {
+			cardList = notesServiceImpl.getCardsOfNotebook(selectedNotebook, filterId);
+		}
+		
 		setNrOfCards(cardList.size());
 		calculatetLastEdited();
 	}
 
 	private void calculatetLastEdited() {
+		created = "";
 		lastEdited = "";
 		lastStudied = "";
 		
@@ -132,13 +145,15 @@ public class CardController implements Serializable {
 		if (filterSelectItems == null) {
 			filterSelectItems = new ArrayList<SelectableItem>(7);
 			
-			filterSelectItems.add(new SelectableItem(-1, "Not filtered"));
-			filterSelectItems.add(new SelectableItem(1, "Answered wrong"));
-			filterSelectItems.add(new SelectableItem(2, "Answered correct"));
-			filterSelectItems.add(new SelectableItem(3, "Recently studied"));
-			filterSelectItems.add(new SelectableItem(4, "Lesson"));
-			filterSelectItems.add(new SelectableItem(5, "Recently added"));
-			filterSelectItems.add(new SelectableItem(6, "REcently modified"));		
+			filterSelectItems.add(new SelectableItem(CommonConstants.FILTER_NOT, "Not filtered"));
+			filterSelectItems.add(new SelectableItem(CommonConstants.FILTER_ANSWER_WRONG, "Answered wrong"));
+			filterSelectItems.add(new SelectableItem(CommonConstants.FILTER_ANSWER_CORRECT, "Answered correct"));
+			filterSelectItems.add(new SelectableItem(CommonConstants.FILTER_RECENT_STUDY, "Recently studied"));
+			filterSelectItems.add(new SelectableItem(CommonConstants.FILTER_LESSON, "Lesson"));
+			filterSelectItems.add(new SelectableItem(CommonConstants.FILTER_RECENT_ADD, "Recently added"));
+			filterSelectItems.add(new SelectableItem(CommonConstants.FILTER_RECENT_MODIFIED, "REcently modified"));
+			
+			// TODO new filter for learned
 		}
 
 		return filterSelectItems;
@@ -163,6 +178,28 @@ public class CardController implements Serializable {
 	public void setFilter(String filter) {
 		this.selectedFilterId = filter;
 	}
+	
+	/**
+	 * Increases the learn progress of every card in the given cardlist.
+	 * 
+	 * @return null. This results in the presentation of the same page
+	 */
+	public String incLearnProgress() {
+		StudySession studySession = new StudySession(notesServiceImpl, cardList);
+		if (studySession.isInit()) {
+			for (Card currentCard : cardList) {
+				studySession.answeredCorrect(currentCard);				
+			}
+			
+			if (studySession.isChanged()) {				
+				studySession.commitSession();
+				
+				// TODO Info message about how many cards has been changed.
+			}
+		}
+		
+		return null;
+	}
 
 	/**
 	 * Edits the selected card.
@@ -175,7 +212,9 @@ public class CardController implements Serializable {
 		this.card = card;
 
 		pageTitle = "Edit card";
-
+		created = sdf.format(card.getCreated());
+		lastEdited = sdf.format(card.getModified());
+		
 		return "editCard.xhtml";
 	}
 
@@ -263,6 +302,10 @@ public class CardController implements Serializable {
 		this.nrOfCards = "" + nrOfCards;
 	}
 
+	public String getCreated() {
+		return created;
+	}
+	
 	public String getLastEdited() {
 		return lastEdited;
 	}

@@ -8,6 +8,10 @@
 </h:head>
 <h:body>
   <h1>#{cardSlideController.pageTitle}</h1>
+  <h:panelGrid columns="2">
+    <h:outputLabel value="Progress :" />
+    <h:outputText value="#{cardSlideController.cardSlideContainer.progress}" />
+  </h:panelGrid>
   <hr />
   <h:form>
   
@@ -37,6 +41,8 @@
     <br />
 
     <h:commandButton value="Back" action="#{cardSlideController.backToCardList}" />
+    <h:commandButton value="Mark learned" action="#{cardSlideController.markAsLearned}" rendered="#{cardSlideController.allowMarkLearned}"/>
+    <h:commandButton value="Reset progress" action="#{cardSlideController.resetProgress}" rendered="#{cardSlideController.allowResetProgress}"/>
     <h:commandButton value="Stop Session" action="#{cardSlideController.stopSession}" rendered="#{cardSlideController.isStudyMode}"/>
     <h:outputText value="All cards studied" rendered="#{cardSlideController.showAllCardsStudied}" />    
   </h:form>

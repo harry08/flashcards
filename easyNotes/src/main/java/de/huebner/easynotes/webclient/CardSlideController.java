@@ -1,6 +1,8 @@
 package de.huebner.easynotes.webclient;
 
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -258,6 +260,65 @@ public class CardSlideController {
 			return "sessionError.xhtml";
 		}
 	}
+	
+	/**
+	 * Marks the current selected card as learned. 
+	 * 
+	 * @return Page to show the card 
+	 */
+	public String markAsLearned() {
+		Card currentCard = cardSlideContainer.getCurrentCard();
+		List<Card> tmpCardList = new ArrayList<Card>(1);
+		tmpCardList.add(currentCard);
+		
+		StudySession tmpStudySession = new StudySession(notesServiceImpl, tmpCardList);
+		if (tmpStudySession.isInit()) {
+			tmpStudySession.markAsLearned(currentCard);
+			
+			if (tmpStudySession.isChanged()) {				
+				tmpStudySession.commitSession();
+				
+				// get the changed card and replace it with the old one in the cardList.
+				Card updatedCard = notesServiceImpl.getCard(currentCard.getId());
+				cardSlideContainer.replaceCurrentCard(updatedCard);
+				
+				// TODO Info message about how many cards has been changed.
+			}
+		}
+
+		return null;
+	}
+	
+	public boolean getAllowMarkLearned() {
+		return cardSlideMode == SLIDE_MODE_SHOW;
+	} 
+	
+	public String resetProgress() {
+		Card currentCard = cardSlideContainer.getCurrentCard();
+		List<Card> tmpCardList = new ArrayList<Card>(1);
+		tmpCardList.add(currentCard);
+		
+		StudySession tmpStudySession = new StudySession(notesServiceImpl, tmpCardList);
+		if (tmpStudySession.isInit()) {
+			tmpStudySession.resetProgress(currentCard);
+			
+			if (tmpStudySession.isChanged()) {				
+				tmpStudySession.commitSession();
+				
+				// get the changed card and replace it with the old one in the cardList.
+				Card updatedCard = notesServiceImpl.getCard(currentCard.getId());
+				cardSlideContainer.replaceCurrentCard(updatedCard);
+				
+				// TODO Info message about how many cards has been changed.
+			}
+		}
+		
+		return null;
+	}
+	
+	public boolean getAllowResetProgress() {
+		return cardSlideMode == SLIDE_MODE_SHOW;
+	} 
 
 	public CardSlideContainer getCardSlideContainer() {
 		return cardSlideContainer;

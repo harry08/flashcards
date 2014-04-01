@@ -13,7 +13,15 @@
 </h:head>
 <h:body>
 	<h1>#{cardController.pageTitle}</h1>
-	<hr />
+	<h:panelGrid columns="2">
+    <h:outputLabel value="Created :" />
+    <h:outputText value="#{cardController.created}" />
+  </h:panelGrid>
+	<h:panelGrid columns="2">
+    <h:outputLabel value="Last edited :" />
+    <h:outputText value="#{cardController.lastEdited}" />
+  </h:panelGrid>
+  <hr />
 	<h:form>
 		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">
 			<h:outputLabel value="Fronttext :" />

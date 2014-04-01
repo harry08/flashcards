@@ -1,6 +1,7 @@
 package de.huebner.easynotes.webclient;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +57,12 @@ public class NotebookController implements Serializable {
 	private List<CategoryEntry> notebookCategoryList;
 
 	private String editTitle;
+	
+	private String created;
+	
+	private String lastEdited;
+	
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
 	public List<Notebook> getNotebookList() {
 		if (notebookList == null) {
@@ -138,6 +145,8 @@ public class NotebookController implements Serializable {
 		generateNotebookCategoryList();
 
 		editTitle = "Edit notebook";
+		created = sdf.format(notebook.getCreated());
+		lastEdited = sdf.format(notebook.getModified());
 
 		return "editNotebook.xhtml";
 	}
@@ -251,6 +260,14 @@ public class NotebookController implements Serializable {
 		return editTitle;
 	}
 	
+	public String getCreated() {
+		return created;
+	}
+	
+	public String getLastEdited() {
+		return lastEdited;
+	}
+	
 	private Category getCategoryWithId(String categoryId) {
 		long catId = Long.valueOf(categoryId);
 		for (Category currentCategory : categoryList) {
@@ -261,7 +278,6 @@ public class NotebookController implements Serializable {
 		
 		return null;
 	}
-	
 	
 	/**
 	 * Generates the list with notebook - category associations.

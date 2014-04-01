@@ -23,8 +23,18 @@ import javax.persistence.TemporalType;
 		@NamedQuery(name = "Card.findAllCards", query = "SELECT c FROM Card c"),
 		@NamedQuery(name = "Card.findCardsOfNotebook", query = "SELECT c FROM Card c "
 				+ "WHERE c.notebook = :notebook"),
+		@NamedQuery(name = "Card.findCardWithId", query = "SELECT c FROM Card c "
+				+ "WHERE c.id = :id"),
+		@NamedQuery(name = "Card.findAnsweredCardsOfNotebook", query = "SELECT c FROM Card c "
+				+ "WHERE c.notebook = :notebook AND c.answer = :answer"),
+		@NamedQuery(name = "Card.findCardsOfNotebookRecentStudied", query = "SELECT c FROM Card c "
+				+ "WHERE c.notebook = :notebook AND c.lastLearned >= :lastLearned"),
+		@NamedQuery(name = "Card.findAnsweredCardsOfNotebookRecentAdded", query = "SELECT c FROM Card c "
+				+ "WHERE c.notebook = :notebook AND c.created >= :created"),
+		@NamedQuery(name = "Card.findAnsweredCardsOfNotebookRecentModified", query = "SELECT c FROM Card c "
+				+ "WHERE c.notebook = :notebook AND c.modified >= :modified"),		
 		@NamedQuery(name = "Card.findCardsForLesson", query = "SELECT c FROM Card c "
-				+ "WHERE c.notebook = :notebook AND (c.nextScheduled <= :nextScheduled OR c.nextScheduled IS NULL)"
+				+ "WHERE c.notebook = :notebook AND (c.nextScheduled <= :nextScheduled) "
 				+ "ORDER BY c.nextScheduled") })
 public class Card {
 
@@ -128,6 +138,11 @@ public class Card {
 	 * scheduled.
 	 */
 	private int compartment;
+	
+	/**
+	 * Indicator that the card has been studied. This value is not saved in the database.
+	 */
+	private transient boolean studied;
 
 	/**
 	 * Default constructor
@@ -288,21 +303,49 @@ public class Card {
 	public boolean isAnsweredWrong() {
 		return getAnswer() == ANSWER_WRONG;
 	}
+	
+	public boolean isStudied() {
+		//return isAnswered() || studied == true;
+		return studied == true;
+	}
 
 	public void setAnsweredCorrect() {
 		setAnswer(ANSWER_CORRECT);
 		incNrOfCorrect();
 		nrOfWrong = 0;
+		
+		studied = true;
+	}
+	
+	public void markAsLearned(int maxAnswers) {
+		setAnswer(ANSWER_CORRECT);
+		
+		nrOfCorrect = maxAnswers;
+		nrOfWrong = 0;
+		
+		studied = true;
 	}
 
 	public void setAnsweredWrong() {
 		setAnswer(ANSWER_WRONG);
 		incNrOfWrong();
 		nrOfCorrect = 0;
+		
+		studied = true;
+	}
+	
+	public void resetProgress() {
+		setAnswer(NO_ANSWER);
+		
+		nrOfCorrect = 0;
+		nrOfWrong = 0;	
+		
+		studied = true;
 	}
 
-	public void clearAnswer() {
+	public void resetCurrentStudyInfo() {
 		setAnswer(NO_ANSWER);
+		studied = false;
 	}
 
 	private void incNrOfCorrect() {

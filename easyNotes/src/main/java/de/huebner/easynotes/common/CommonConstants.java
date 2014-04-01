@@ -25,6 +25,15 @@ public class CommonConstants {
     public static final String FIELD_TITLE = "title";
     public static final String FIELD_TEXT = "text";
     
+    public static final int FILTER_NOT = -1;
+    public static final int FILTER_ANSWER_WRONG = 1;
+    public static final int FILTER_ANSWER_CORRECT = 2;
+    public static final int FILTER_RECENT_STUDY = 3;
+    public static final int FILTER_LESSON = 4;
+    public static final int FILTER_RECENT_ADD = 5;
+    public static final int FILTER_RECENT_MODIFIED = 6;
+    
+    
     public static final SimpleDateFormat TIMESTAMP_FMT = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
         
     /**

@@ -65,6 +65,11 @@ public class CardSlideContainer {
 	 * Flag to control if the last answer should be shown
 	 */
 	private boolean showLastAnswer;
+	
+	/**
+	 * Progress of the currently displayed card
+	 */
+	private String progress;
 
 	/**
 	 * Creates the container with a given list of cards and the card to display
@@ -166,6 +171,23 @@ public class CardSlideContainer {
 	public Card getCurrentCard() {
 		return currentCard;
 	}
+	
+	/**
+	 * Replaces the current card with id with the given card
+	 * 
+	 * @param cardToUpdate
+	 *            card which is added in the list
+	 */
+	public void replaceCurrentCard(Card cardToUpdate) {
+		int index = cardList.indexOf(currentCard);
+		
+		cardList.remove(index);
+		cardList.add(index, cardToUpdate);
+
+		currentCard = cardToUpdate;
+						
+		generateSlideInformation();
+	}
 
 	private void generateSlideInformation() {
 		int size = cardList.size();
@@ -173,6 +195,8 @@ public class CardSlideContainer {
 
 		slideTitle = "Card " + nr + " of " + size;
 		
+		int maxCompartment = 9;
+		progress = currentCard.getCompartment() + " / " + maxCompartment; 
 		String frontText = currentCard.getFrontText();
 		String backText = currentCard.getBackText();
 		if (backText == null) {
@@ -230,6 +254,10 @@ public class CardSlideContainer {
 
 	public String getCardText() {
 		return cardText;
+	}
+	
+	public String getProgress() {
+		return progress;
 	}
 
 	public boolean getSubheaderShown() {

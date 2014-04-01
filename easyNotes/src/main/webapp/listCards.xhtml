@@ -22,18 +22,18 @@
     <h:outputText value="#{cardController.lastStudied}" />
   </h:panelGrid>
   <hr />
-    
+
 	<h:form>
-    <h:panelGrid columns="2" >
-      <h:outputLabel value="Filter :" />
-      <h:selectOneMenu value="#{cardController.filter}"
-        onchange="submit()" valueChangeListener="#{cardController.filterListChanged}">
-        <f:selectItems value="#{cardController.filterSelectItems}"
-          var="item" itemLabel="#{item.title}" itemValue="#{item.itemId}" />
-      </h:selectOneMenu>      
-    </h:panelGrid>
-    <br />
-    
+		<h:panelGrid columns="2">
+			<h:outputLabel value="Filter :" />
+			<h:selectOneMenu value="#{cardController.filter}" onchange="submit()"
+				valueChangeListener="#{cardController.filterListChanged}">
+				<f:selectItems value="#{cardController.filterSelectItems}"
+					var="item" itemLabel="#{item.title}" itemValue="#{item.itemId}" />
+			</h:selectOneMenu>
+		</h:panelGrid>
+		<br />
+
 		<h:dataTable styleClass="general-table"
 			headerClass="general-table-header"
 			rowClasses="general-table-odd-row,general-table-even-row"
@@ -70,20 +70,20 @@
 				<h:outputText value="#{card.compartment}" />
 			</h:column>
 			<h:column>
-        <f:facet name="header">Action</f:facet>
-        <h:commandLink value="Show"
-          action="#{cardSlideController.openSlidePage(cardController.selectedNotebook, card)}" />
-      </h:column>
+				<f:facet name="header">Action</f:facet>
+				<h:commandLink value="Show"
+					action="#{cardSlideController.openSlidePage(cardController.selectedNotebook, card)}" />
+			</h:column>
 			<h:column>
 				<f:facet name="header">Action</f:facet>
 				<h:commandLink value="Edit"
 					action="#{cardController.editCard(card)}" />
 			</h:column>
 			<h:column>
-        <f:facet name="header">Action</f:facet>
-        <h:commandLink value="Delete"
-          action="#{cardController.deleteCard(card)}" />
-      </h:column>
+				<f:facet name="header">Action</f:facet>
+				<h:commandLink value="Delete"
+					action="#{cardController.deleteCard(card)}" />
+			</h:column>
 		</h:dataTable>
 
 		<br />
@@ -96,8 +96,10 @@
 			action="#{cardImportController.openImportPage(cardController.selectedNotebook)}" />
 		<h:commandButton value="Export cards"
 			action="#{cardExportController.openExportPage(cardController.selectedNotebook)}" />
+		<h:commandButton value="Inc progress"
+			action="#{cardController.incLearnProgress}" />
 		<h:commandButton value="Study lesson"
-      action="#{cardSlideController.studyLesson(cardController.selectedNotebook)}" />
+			action="#{cardSlideController.studyLesson(cardController.selectedNotebook)}" />
 	</h:form>
 	<hr />
 	<i>easyNotes</i>
