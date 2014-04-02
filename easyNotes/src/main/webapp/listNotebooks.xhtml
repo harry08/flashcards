@@ -48,18 +48,13 @@
 				<f:facet name="header">Action</f:facet>
 				<h:commandLink value="Edit"
 					action="#{notebookController.editNotebook(notebook)}" />
-			</h:column>
-			<h:column>
-				<f:facet name="header">Action</f:facet>
-				<h:commandLink value="Delete"
-					action="#{notebookController.deleteNotebook(notebook)}" />
-			</h:column>
+			</h:column>			
 		</h:dataTable>
 
 		<br />
 
 		<h:commandButton value="Add a new notebook"
-			action="#{notebookController.addNewNotebook}" />
+			action="#{notebookController.addNewNotebook}" />	
 	</h:form>
 	<hr />
 	<i>easyNotes</i>

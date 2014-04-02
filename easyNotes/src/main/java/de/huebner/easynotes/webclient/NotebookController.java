@@ -199,19 +199,32 @@ public class NotebookController implements Serializable {
 	}
 	
 	/**
-   * Deletes the given notebook
-   * 
-   * @param notebook
-   *            notebook to delete
-   * @return null. This results in the presentation of the same page
-   */
-  public String deleteNotebook(Notebook notebook) {
-    notesServiceImpl.deleteNotebook(notebook);
-    
-    retrieveNotebookList();
+	 * Deletes the given notebook
+	 * 
+	 * @param notebook
+	 *            notebook to delete
+	 * @return null. This results in the presentation of the same page
+	 */
+	public String deleteNotebook(Notebook notebook) {
+		notesServiceImpl.deleteNotebook(notebook);
 
-    return null;
-  }
+		retrieveNotebookList();
+
+		return null;
+	}
+	
+	/**
+	 * Deletes the selected notebook
+	 * 
+	 * @return Page to show the updated notebooklist.
+	 */
+	public String deleteNotebook() {
+		notesServiceImpl.deleteNotebook(notebook);
+
+		retrieveNotebookList();
+
+		return "listNotebooks.xhtml";
+	}
 	
 	/**
 	 * Shows the notebooklist page

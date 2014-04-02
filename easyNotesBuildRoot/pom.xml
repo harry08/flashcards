@@ -7,6 +7,10 @@
 	<packaging>pom</packaging>
 	<name>easyNotes BuildRoot</name>
 	<description>Root pom.xml for easyNotes</description>
+	
+	<modules>
+    <module>/../easyNotes</module>
+  </modules>
 
 	<properties>
 		<derby-version>10.6.1.0</derby-version>
@@ -21,6 +25,7 @@
 		<jsf-version>2.0</jsf-version>
 		<jsr250-version>1.0</jsr250-version>
 		<junit-version>4.8.1</junit-version>
+		<primefaces-version>4.0</primefaces-version>
 		<plugin-jar-version>2.2</plugin-jar-version>
 		<plugin-war-version>2.1-alpha-2</plugin-war-version>
 		<plugin-maven-processor>1.3.5</plugin-maven-processor>

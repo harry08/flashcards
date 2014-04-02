@@ -2,7 +2,8 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core">
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 <h:head>
 	<h:outputStylesheet library="css" name="style.css" />
 	<title>#{notebookController.editTitle}</title>
@@ -36,10 +37,21 @@
 	  	  
 		<br />
 		
-		<h:commandButton value="Cancel"
+		<p:commandButton value="Cancel"
 			action="#{notebookController.cancelEdit}" />
-		<h:commandButton value="Save"
+		<p:commandButton value="Save"
 			action="#{notebookController.updateNotebook}" />
+		<p:commandButton type="button" value="Delete" onclick="PF('cd').show()" />
+
+		<p:confirmDialog
+			message="Would you like to delete the notebook? All contained cards are also deleted."
+			header="Delete notebook" severity="alert" widgetVar="cd">
+			<p:commandButton value="Yes"
+				action="#{notebookController.deleteNotebook}" />
+			<p:commandButton value="No" onclick="PF('cd').hide();"
+				type="button" />
+		</p:confirmDialog>
+
 	</h:form>
 	<hr />
 	<i>easyNotes</i>
