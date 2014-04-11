@@ -2,7 +2,8 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core">
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 <h:head>
 	<h:outputStylesheet library="css" name="style.css" />
 	<title>easyNotes - Categories</title>
@@ -10,6 +11,8 @@
 <h:body>
 	<h1>Categories</h1>
 	<hr />
+	<p:messages id="messages" autoUpdate="true" closable="true" />
+	
 	<h:form>
 		<h:dataTable styleClass="general-table"
 			headerClass="general-table-header"
@@ -32,19 +35,14 @@
 				<f:facet name="header">Action</f:facet>
 				<h:commandLink value="Edit"
 					action="#{categoryController.editCategory(category)}" />
-			</h:column>
-			<h:column>
-				<f:facet name="header">Action</f:facet>
-				<h:commandLink value="Delete"
-					action="#{categoryController.deleteCategory(category)}" />
-			</h:column>
+			</h:column>			
 		</h:dataTable>
 		
 		<br />
 		
-		<h:commandButton value="Back"
+		<p:commandButton value="Back"
 			action="#{categoryController.backToNotebookList}" />
-		<h:commandButton value="Add a new category"
+		<p:commandButton value="Add a new category"
 			action="#{categoryController.addNewCategory}" />
 	</h:form>
 	<hr />

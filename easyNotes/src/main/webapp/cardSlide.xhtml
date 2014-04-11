@@ -1,52 +1,94 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:h="http://java.sun.com/jsf/html">
+  xmlns:h="http://java.sun.com/jsf/html"
+  xmlns:p="http://primefaces.org/ui">
 <h:head>
   <h:outputStylesheet library="css" name="style.css" />
   <title>#{cardSlideController.pageTitle}</title>
 </h:head>
 <h:body>
-  <h1>#{cardSlideController.pageTitle}</h1>
-  <h:panelGrid columns="2">
-    <h:outputLabel value="Progress :" />
-    <h:outputText value="#{cardSlideController.cardSlideContainer.progress}" />
-  </h:panelGrid>
-  <hr />
-  <h:form>
-  
-    <h:commandButton value="Wrong" action="#{cardSlideController.answeredWrong}" rendered="#{cardSlideController.canAnswer}" />
-  	<h:commandButton value="Flip" action="#{cardSlideController.flipCard}"  />
-  	<h:commandButton value="Skip" action="#{cardSlideController.skipCard}" rendered="#{cardSlideController.canAnswer}" />
-  	<h:commandButton value="Correct" action="#{cardSlideController.answeredCorrect}" rendered="#{cardSlideController.canAnswer}" />
-  	
-  	<br />
-  	<br />
-  	<h:outputText value="#{cardSlideController.cardSlideContainer.cardSide}" />
-  	<br />
-  	<h:outputText value="#{cardSlideController.cardSlideContainer.cardAnswer}" />
-    <br />
-    <h:panelGrid columns="3" columnClasses="slide-table-col-button, slide-table-col-text, slide-table-col-button">
-      <h:commandButton value="Prev" action="#{cardSlideController.previousCard}" styleClass="slide-table-button" disabled="#{cardSlideController.hasNoPreviousCard}"/>
-      <h:column>
-        <h:outputText value="#{cardSlideController.cardSlideContainer.cardHeader}" styleClass="slide-header-field" />
-        <br />
-        <h:outputText value="#{cardSlideController.cardSlideContainer.cardSubheader}" rendered="#{cardSlideController.cardSlideContainer.subheaderShown}" styleClass="slide-subheader-field"/>
-        <br />
-        <h:outputText value="#{cardSlideController.cardSlideContainer.cardText}" rendered="#{cardSlideController.cardSlideContainer.textShown}" styleClass="slide-text-field"/> 
-      </h:column>
-      <h:commandButton value="Next" action="#{cardSlideController.nextCard}" styleClass="slide-table-button" disabled="#{cardSlideController.hasNoNextCard}"/>
-    </h:panelGrid>    
+	<h:form>
+		<h1>#{cardSlideController.pageTitle}</h1>
+    
+		<p:messages id="messages" autoUpdate="true" closable="true" />
 
-    <br />
+		<h:panelGrid columns="2">
+			<h:outputLabel value="Progress :" />
+			<h:outputText
+				value="#{cardSlideController.cardSlideContainer.progress}" />
+		</h:panelGrid>
+		<h:panelGrid columns="2">
+			<h:outputLabel value="Card side :" />
+			<h:outputText
+				value="#{cardSlideController.cardSlideContainer.cardSide}" />
+		</h:panelGrid>
+		<h:panelGrid columns="2" rendered="#{cardSlideController.isStudyMode}">
+			<h:outputLabel value="Answer :" />
+			<h:outputText
+				value="#{cardSlideController.cardSlideContainer.cardAnswer}" />
+		</h:panelGrid>
 
-    <h:commandButton value="Back" action="#{cardSlideController.backToCardList}" />
-    <h:commandButton value="Mark learned" action="#{cardSlideController.markAsLearned}" rendered="#{cardSlideController.allowMarkLearned}"/>
-    <h:commandButton value="Reset progress" action="#{cardSlideController.resetProgress}" rendered="#{cardSlideController.allowResetProgress}"/>
-    <h:commandButton value="Stop Session" action="#{cardSlideController.stopSession}" rendered="#{cardSlideController.isStudyMode}"/>
-    <h:outputText value="All cards studied" rendered="#{cardSlideController.showAllCardsStudied}" />    
-  </h:form>
-  <hr />
+		<hr />
+
+		<p:commandButton value="Wrong" ajax="false"
+			action="#{cardSlideController.answeredWrong}"
+			rendered="#{cardSlideController.canAnswer}" />
+		<p:commandButton value="Flip" ajax="false"
+			action="#{cardSlideController.flipCard}" />
+		<p:commandButton value="Skip" ajax="false"
+			action="#{cardSlideController.skipCard}"
+			rendered="#{cardSlideController.canAnswer}" />
+		<p:commandButton value="Correct" ajax="false"
+			action="#{cardSlideController.answeredCorrect}"
+			rendered="#{cardSlideController.canAnswer}" />
+		<br />
+		<br />
+		<br />
+		<h:panelGrid columns="3"
+			columnClasses="slide-table-col-button, slide-table-col-text, slide-table-col-button">
+			<p:commandButton value="Prev" ajax="false"
+				action="#{cardSlideController.previousCard}"
+				styleClass="slide-table-button"
+				disabled="#{cardSlideController.hasNoPreviousCard}" />
+			<h:column>
+				<h:outputText
+					value="#{cardSlideController.cardSlideContainer.cardHeader}"
+					styleClass="slide-header-field" />
+				<br />
+				<h:outputText
+					value="#{cardSlideController.cardSlideContainer.cardSubheader}"
+					rendered="#{cardSlideController.cardSlideContainer.subheaderShown}"
+					styleClass="slide-subheader-field" />
+				<br />
+				<h:outputText
+					value="#{cardSlideController.cardSlideContainer.cardText}"
+					rendered="#{cardSlideController.cardSlideContainer.textShown}"
+					styleClass="slide-text-field" />
+			</h:column>
+			<p:commandButton value="Next" ajax="false"
+				action="#{cardSlideController.nextCard}"
+				styleClass="slide-table-button"
+				disabled="#{cardSlideController.hasNoNextCard}" />
+		</h:panelGrid>
+
+		<br />
+
+		<p:commandButton value="Back" ajax="false"
+			action="#{cardSlideController.backToCardList}" />
+		<p:commandButton value="Mark learned" ajax="false"
+			action="#{cardSlideController.markAsLearned}"
+			rendered="#{cardSlideController.allowMarkLearned}" />
+		<p:commandButton value="Reset progress" ajax="false"
+			action="#{cardSlideController.resetProgress}"
+			rendered="#{cardSlideController.allowResetProgress}" />
+		<p:commandButton value="Stop Session" ajax="false"
+			action="#{cardSlideController.stopSession}"
+			rendered="#{cardSlideController.isStudyMode}" />
+		<h:outputText value="All cards studied"
+			rendered="#{cardSlideController.showAllCardsStudied}" />
+	</h:form>
+	<hr />
   <i>easyNotes</i>
 </h:body>
 </html>

@@ -23,7 +23,7 @@
 		<h3>Notebook</h3>
 		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">
 			<h:outputLabel value="Title :" />
-			<h:inputText value="#{notebookController.notebook.title}" size="60" />
+			<p:inputText value="#{notebookController.notebook.title}" size="60" />
 		</h:panelGrid>
 		
 		<br />
@@ -36,12 +36,13 @@
 		</h:dataTable>
 	  	  
 		<br />
-		
-		<p:commandButton value="Cancel"
+
+		<p:commandButton value="Cancel" ajax="false"
 			action="#{notebookController.cancelEdit}" />
-		<p:commandButton value="Save"
+		<p:commandButton value="Save" ajax="false"
 			action="#{notebookController.updateNotebook}" />
-		<p:commandButton type="button" value="Delete" onclick="PF('cd').show()" />
+		<p:commandButton type="button" value="Delete"
+			onclick="PF('cd').show()" rendered="#{notebookController.canDelete}" />
 
 		<p:confirmDialog
 			message="Would you like to delete the notebook? All contained cards are also deleted."

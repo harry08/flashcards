@@ -82,7 +82,7 @@ h1 {
 }
 
 .slide-table-col-button {
-	width: 80px;
+	width: 100px;
 	vertical-align: top
 }
 
@@ -92,5 +92,5 @@ h1 {
 }
 
 .slide-table-button {
-	width: 50px;
+	width: 80px;
 }

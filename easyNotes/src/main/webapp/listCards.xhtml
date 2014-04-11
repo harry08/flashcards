@@ -2,30 +2,35 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core">
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 <h:head>
 	<h:outputStylesheet library="css" name="style.css" />
-	<title>easyNotes - Cards</title>
+	<title>easyNotes - Cards</title>  
 </h:head>
 <h:body>
-	<h1>Cards of #{cardController.selectedNotebook.title}</h1>
-	<h:panelGrid columns="2">
-		<h:outputLabel value="Nr of cards :" />
-		<h:outputText value="#{cardController.nrOfCards}" />
-	</h:panelGrid>
-	<h:panelGrid columns="2">
-		<h:outputLabel value="Last edited :" />
-		<h:outputText value="#{cardController.lastEdited}" />
-	</h:panelGrid>
-	<h:panelGrid columns="2">
-    <h:outputLabel value="Last studied :" />
-    <h:outputText value="#{cardController.lastStudied}" />
-  </h:panelGrid>
-  <hr />
-
 	<h:form>
+		<h1>#{cardController.listCardsPageTitle}</h1>
+
+		<p:messages id="messages" autoUpdate="true" closable="true" />
+
 		<h:panelGrid columns="2">
-			<h:outputLabel value="Filter :" />
+			<h:outputLabel value="Nr of cards :" />
+			<h:outputText value="#{cardController.nrOfCards}" />
+		</h:panelGrid>
+		<h:panelGrid columns="2">
+			<h:outputLabel value="Last edited :" />
+			<h:outputText value="#{cardController.lastEdited}" />
+		</h:panelGrid>
+		<h:panelGrid columns="2">
+			<h:outputLabel value="Last studied :" />
+			<h:outputText value="#{cardController.lastStudied}" />
+		</h:panelGrid>
+
+		<hr />
+
+		<h:panelGrid columns="2">
+			<p:outputLabel value="Filter :" />
 			<h:selectOneMenu value="#{cardController.filter}" onchange="submit()"
 				valueChangeListener="#{cardController.filterListChanged}">
 				<f:selectItems value="#{cardController.filterSelectItems}"
@@ -79,27 +84,23 @@
 				<h:commandLink value="Edit"
 					action="#{cardController.editCard(card)}" />
 			</h:column>
-			<h:column>
-				<f:facet name="header">Action</f:facet>
-				<h:commandLink value="Delete"
-					action="#{cardController.deleteCard(card)}" />
-			</h:column>
 		</h:dataTable>
 
 		<br />
 
-		<h:commandButton value="Back"
+		<p:commandButton value="Back" ajax="false"
 			action="#{cardController.backToNotebookList}" />
-		<h:commandButton value="Add a new card"
+		<p:commandButton value="Add a new card" ajax="false"
 			action="#{cardController.addNewCard}" />
-		<h:commandButton value="Import cards"
+		<p:commandButton value="Import cards" ajax="false"
 			action="#{cardImportController.openImportPage(cardController.selectedNotebook)}" />
-		<h:commandButton value="Export cards"
+		<p:commandButton value="Export cards" ajax="false"
 			action="#{cardExportController.openExportPage(cardController.selectedNotebook)}" />
-		<h:commandButton value="Inc progress"
+		<p:commandButton value="Inc progress" ajax="false"
 			action="#{cardController.incLearnProgress}" />
-		<h:commandButton value="Study lesson"
+		<p:commandButton value="Study lesson" ajax="false"
 			action="#{cardSlideController.studyLesson(cardController.selectedNotebook)}" />
+
 	</h:form>
 	<hr />
 	<i>easyNotes</i>

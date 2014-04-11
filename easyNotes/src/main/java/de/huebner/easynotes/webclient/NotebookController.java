@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
 import de.huebner.easynotes.businesslogic.data.Category;
@@ -219,10 +221,14 @@ public class NotebookController implements Serializable {
 	 * @return Page to show the updated notebooklist.
 	 */
 	public String deleteNotebook() {
+		String title = notebook.getTitle();
 		notesServiceImpl.deleteNotebook(notebook);
 
 		retrieveNotebookList();
 
+		FacesMessage info = new FacesMessage(FacesMessage.SEVERITY_INFO, "Successfully deleted notebook " + title, "");
+		FacesContext.getCurrentInstance().addMessage(null, info);
+		
 		return "listNotebooks.xhtml";
 	}
 	
@@ -281,6 +287,20 @@ public class NotebookController implements Serializable {
 		return lastEdited;
 	}
 	
+	/**
+	 * Returns if calling the delete operation on the notebook is allowed.
+	 * 
+	 * @return true, if the given notebook can be deleted. Otherwise false.
+	 */
+	public boolean getCanDelete() {
+		if (notebook != null && notebook.getId() > 0) {
+			// The notebook is not new and can be deleted.
+			return true;
+		}
+
+		return false;
+	}
+	
 	private Category getCategoryWithId(String categoryId) {
 		long catId = Long.valueOf(categoryId);
 		for (Category currentCategory : categoryList) {
@@ -313,14 +333,15 @@ public class NotebookController implements Serializable {
 	 * Generates an initial list with notebook - category associations.
 	 */
 	private void generateInitialNotebookCategoryList() {
-	  // Make sure categories are init.
-    getCategoryList();
+		// Make sure categories are init.
+		getCategoryList();
 
-    notebookCategoryList = new ArrayList<CategoryEntry>(categoryList.size());
-    for (Category currentCategory : categoryList) {
-      CategoryEntry currentEntry = new CategoryEntry(currentCategory, false);
-      notebookCategoryList.add(currentEntry);
-    }
+		notebookCategoryList = new ArrayList<CategoryEntry>(categoryList.size());
+		for (Category currentCategory : categoryList) {
+			CategoryEntry currentEntry = new CategoryEntry(currentCategory,
+					false);
+			notebookCategoryList.add(currentEntry);
+		}
 	}
 		
 	/**

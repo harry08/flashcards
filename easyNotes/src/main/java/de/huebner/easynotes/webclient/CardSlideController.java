@@ -2,13 +2,14 @@ package de.huebner.easynotes.webclient;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 import de.huebner.easynotes.businesslogic.data.Card;
 import de.huebner.easynotes.businesslogic.data.Notebook;
@@ -89,6 +90,18 @@ public class CardSlideController {
 			studySession.cancelSession();
 		}
 		return cardController.showCardList(cardsStudied);
+	}
+	
+	/**
+	 * Navigates back to the notebook list.
+	 * 
+	 * @return notebooklist page
+	 */
+	public String backToNotebookList() {
+		if (studySession != null && studySession.isInit()) {
+			studySession.cancelSession();
+		}
+		return "listNotebooks.xhtml";
 	}
 	
 	/**
@@ -282,7 +295,8 @@ public class CardSlideController {
 				Card updatedCard = notesServiceImpl.getCard(currentCard.getId());
 				cardSlideContainer.replaceCurrentCard(updatedCard);
 				
-				// TODO Info message about how many cards has been changed.
+				FacesMessage info = new FacesMessage(FacesMessage.SEVERITY_INFO, "Card marked as learned", null);
+				FacesContext.getCurrentInstance().addMessage(null, info);
 			}
 		}
 
@@ -309,7 +323,8 @@ public class CardSlideController {
 				Card updatedCard = notesServiceImpl.getCard(currentCard.getId());
 				cardSlideContainer.replaceCurrentCard(updatedCard);
 				
-				// TODO Info message about how many cards has been changed.
+				FacesMessage info = new FacesMessage(FacesMessage.SEVERITY_INFO, "Card progress reset", null);
+				FacesContext.getCurrentInstance().addMessage(null, info);
 			}
 		}
 		

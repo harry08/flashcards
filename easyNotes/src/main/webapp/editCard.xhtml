@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
 <h:head>
 	<h:outputStylesheet library="css" name="style.css" />
 	<style type="text/css">
@@ -12,35 +13,48 @@
 	<title>#{cardController.pageTitle}</title>
 </h:head>
 <h:body>
-	<h1>#{cardController.pageTitle}</h1>
-	<h:panelGrid columns="2">
-    <h:outputLabel value="Created :" />
-    <h:outputText value="#{cardController.created}" />
-  </h:panelGrid>
-	<h:panelGrid columns="2">
-    <h:outputLabel value="Last edited :" />
-    <h:outputText value="#{cardController.lastEdited}" />
-  </h:panelGrid>
-  <hr />
 	<h:form>
+    <h1>#{cardController.pageTitle}</h1>
+		
+		<h:panelGrid columns="2">
+			<p:outputLabel value="Created :" />
+			<h:outputText value="#{cardController.created}" />
+		</h:panelGrid>
+		<h:panelGrid columns="2">
+			<p:outputLabel value="Last edited :" />
+			<h:outputText value="#{cardController.lastEdited}" />
+		</h:panelGrid>
+		
+		<hr />
+
 		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">
-			<h:outputLabel value="Fronttext :" />
-			<h:inputText value="#{cardController.card.frontText}" size="60" />
+			<p:outputLabel value="Fronttext :" />
+			<p:inputText value="#{cardController.card.frontText}" size="60" />
 		</h:panelGrid>
 		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">
-			<h:outputLabel value="Backtext :" />
-			<h:inputText value="#{cardController.card.backText}" size="60" />
+			<p:outputLabel value="Backtext :" />
+			<p:inputText value="#{cardController.card.backText}" size="60" />
 		</h:panelGrid>
 		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">
-			<h:outputLabel value="Description :" />
-			<h:inputTextarea value="#{cardController.card.text}" cols="60"
+			<p:outputLabel value="Description :" />
+			<p:inputTextarea value="#{cardController.card.text}" cols="60"
 				rows="15" />
 		</h:panelGrid>
 
 		<br />
 
-		<h:commandButton value="Cancel" action="#{cardController.cancelEdit}" />
-		<h:commandButton value="Save" action="#{cardController.updateCard}" />
+		<p:commandButton value="Cancel" ajax="false"
+			action="#{cardController.cancelEdit}" />
+		<p:commandButton value="Save" ajax="false"
+			action="#{cardController.updateCard}" />
+		<p:commandButton type="button" value="Delete"
+			onclick="PF('cd').show()" rendered="#{cardController.canDelete}" />
+
+		<p:confirmDialog message="Would you like to delete the card?"
+			header="Delete card" severity="alert" widgetVar="cd">
+			<p:commandButton value="Yes" action="#{cardController.deleteCard}" />
+			<p:commandButton value="No" onclick="PF('cd').hide();" type="button" />
+		</p:confirmDialog>
 
 	</h:form>
 	<hr />

@@ -2,16 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.huebner.easynotes</groupId>
-	<artifactId>buildroot</artifactId>
+	<artifactId>easyNotesBuildRoot</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>easyNotes BuildRoot</name>
-	<description>Root pom.xml for easyNotes</description>
+	<description>Root pom.xml for easyNotes. Multi module build</description>
 	
-	<modules>
-    <module>/../easyNotes</module>
-  </modules>
-
 	<properties>
 		<derby-version>10.6.1.0</derby-version>
 		<eclipselink-version>2.3.2</eclipselink-version>
@@ -131,5 +127,9 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<modules>
+    		<module>../easyNotes</module>    
+  	</modules>
 
 </project>	

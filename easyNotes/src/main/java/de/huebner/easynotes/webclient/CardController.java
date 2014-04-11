@@ -7,8 +7,10 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 
 import de.huebner.easynotes.businesslogic.data.Card;
@@ -49,6 +51,11 @@ public class CardController implements Serializable {
 	 * Generated title of page
 	 */
 	private String pageTitle;
+	
+	/**
+	 * Generated title of cardlist page
+	 */
+	private String listCardsPageTitle;
 
 	private String nrOfCards;
 
@@ -61,7 +68,7 @@ public class CardController implements Serializable {
 	private String parentPage = "listNotebooks.xhtml";
 	
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-
+	
 	public List<Card> getCardList() {
 		if (cardList == null) {
 			retrieveCards();
@@ -81,6 +88,8 @@ public class CardController implements Serializable {
 		this.selectedNotebook = notebook;
 		selectedFilterId = String.valueOf(-1);
 		retrieveCards();
+		
+		listCardsPageTitle = "Cards of notebook " + selectedNotebook.getTitle();
 
 		return "listCards.xhmtl";
 	}
@@ -256,10 +265,30 @@ public class CardController implements Serializable {
 	 * @return null. This results in the presentation of the same page
 	 */
 	public String deleteCard(Card card) {
+		String title = card.getFrontText();
 		notesServiceImpl.deleteCard(card);
 		retrieveCards();
+		
+		FacesMessage info = new FacesMessage(FacesMessage.SEVERITY_INFO, "Successfully deleted card " + title, "");
+		FacesContext.getCurrentInstance().addMessage(null, info);
 
 		return null;
+	}
+	
+	/**
+	 * Deletes the selected card
+	 * 
+	 * @return Page to show the updated cardlist.
+	 */
+	public String deleteCard() {
+		String title = card.getFrontText();
+		notesServiceImpl.deleteCard(card);
+		retrieveCards();
+		
+		FacesMessage info = new FacesMessage(FacesMessage.SEVERITY_INFO, "Successfully deleted card " + title, "");
+		FacesContext.getCurrentInstance().addMessage(null, info);
+
+		return "listCards.xhtml";
 	}
 
 	public String showCardList(boolean refresh) {
@@ -292,6 +321,10 @@ public class CardController implements Serializable {
 
 	public String getPageTitle() {
 		return pageTitle;
+	}
+	
+	public String getListCardsPageTitle() {
+		return listCardsPageTitle;
 	}
 
 	public String getNrOfCards() {
@@ -330,5 +363,19 @@ public class CardController implements Serializable {
 	    } 		
 	    
 	    return "";
+	}
+	
+	/**
+	 * Returns if calling the delete operation on the card is callable.
+	 * 
+	 * @return true, if the given card can be deleted. Otherwise false.
+	 */
+	public boolean getCanDelete() {
+		if (card != null && card.getId() > 0) {
+			// The card is not new and can be deleted.
+			return true;
+		}
+
+		return false;
 	}
 }

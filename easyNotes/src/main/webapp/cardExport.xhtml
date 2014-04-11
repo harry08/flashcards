@@ -2,17 +2,19 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core">
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 <h:head>
 	<h:outputStylesheet library="css" name="style.css" />
 	<title>easyNotes - Export</title>
 </h:head>
 <h:body>
 	<h1>Export cards of #{cardExportController.selectedNotebook.title}</h1>
+	
+	<p:messages id="messages" autoUpdate="true" closable="true" />
+	
 	<hr />
 	<h:form>
-		<h:messages />
-
 		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">
 			<h:outputLabel value="Export mode :" />
 			<h:selectOneMenu value="#{cardExportController.exportMode}">
@@ -43,7 +45,7 @@
 			<h:inputText value="#{cardExportController.recordDelimiter}"
 				size="20" />
 		</h:panelGrid>
-		<h:commandButton value="Export cards" includeViewParams="true"
+		<p:commandButton value="Export cards" ajax="false" includeViewParams="true"
 			action="#{cardExportController.exportCards}" />
 		<br />
 		<h:panelGrid columns="1">
@@ -51,7 +53,7 @@
 				cols="100" rows="20" />
 		</h:panelGrid>
 		<br />
-		<h:commandButton value="Back"
+		<p:commandButton value="Back" ajax="false"
 			action="#{cardExportController.backToCardList}" />
 	</h:form>
 	<hr />

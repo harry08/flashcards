@@ -2,17 +2,19 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core">
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 <h:head>
 	<h:outputStylesheet library="css" name="style.css" />
 	<title>easyNotes - Import</title>
 </h:head>
 <h:body>
 	<h1>Import cards to #{cardImportController.selectedNotebook.title}</h1>
+	
+	<p:messages id="messages" autoUpdate="true" closable="true" />
+	
 	<hr />
 	<h:form>
-		<h:messages />
-
 		<h:panelGrid columns="1">
 			<h:inputTextarea value="#{cardImportController.importString}"
 				cols="100" rows="20" />
@@ -20,9 +22,9 @@
 
 		<br />
 
-		<h:commandButton value="Back"
+		<p:commandButton value="Back" ajax="false"
 			action="#{cardImportController.backToCardList}" />
-		<h:commandButton value="Import cards"
+		<p:commandButton value="Import cards" ajax="false"
 			action="#{cardImportController.importCards}" />
 	</h:form>
 	<hr />

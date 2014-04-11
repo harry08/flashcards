@@ -1,7 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
 <h:head>
 	<h:outputStylesheet library="css" name="style.css" />
 	<title>#{categoryController.editTitle}</title>
@@ -20,15 +21,26 @@
 	<h:form>
 		<h:panelGrid columns="2" columnClasses="edit-grid-label-col">
 			<h:outputLabel value="Title :" />
-			<h:inputText value="#{categoryController.category.title}" size="60" />
+			<p:inputText value="#{categoryController.category.title}" required="true" size="60" />
 		</h:panelGrid>
 		
 		<br />
 		
-		<h:commandButton value="Cancel"
+		<p:commandButton value="Cancel" ajax="false"
 			action="#{categoryController.cancelEdit}" />
-		<h:commandButton value="Save"
+		<p:commandButton value="Save" ajax="false"
 			action="#{categoryController.updateCategory}" />
+		<p:commandButton type="button" value="Delete"
+      onclick="PF('cd').show()" rendered="#{categoryController.canDelete}" />
+
+    <p:confirmDialog
+      message="Would you like to delete the category?"
+      header="Delete category" severity="alert" widgetVar="cd">
+      <p:commandButton value="Yes"
+        action="#{categoryController.deleteCategory}" />
+      <p:commandButton value="No" onclick="PF('cd').hide();"
+        type="button" />
+    </p:confirmDialog>	
 	</h:form>
 	<hr />
 	<i>easyNotes</i>

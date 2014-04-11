@@ -77,14 +77,15 @@ public class CardImportController implements Serializable {
 		}
 
 		FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(message));
+				new FacesMessage(FacesMessage.SEVERITY_INFO, message, ""));
+		
 		if (detail1 != null && detail1.length() > 0) {
 			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage("Details: " + detail1));
+					new FacesMessage(FacesMessage.SEVERITY_INFO, message, ""));
 		}
 		if (detail2 != null && detail2.length() > 0) {
 			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage("Details: " + detail2));
+					new FacesMessage(FacesMessage.SEVERITY_INFO, message, ""));
 		}
 
 		return "cardImport.xhmtl";

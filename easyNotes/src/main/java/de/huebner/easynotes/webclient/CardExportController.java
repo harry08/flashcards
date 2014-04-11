@@ -88,9 +88,10 @@ public class CardExportController implements Serializable {
 		} else {
 			message = "No cards exported";
 		}
-		FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage(message));
-
+		
+		FacesMessage info = new FacesMessage(FacesMessage.SEVERITY_INFO, message, "");
+		FacesContext.getCurrentInstance().addMessage(null, info);
+	
 		return "cardExport.xhmtl";
 	}
 

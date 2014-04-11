@@ -2,7 +2,8 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core">
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
 <h:head>
 	<h:outputStylesheet library="css" name="style.css" />
 	<title>easyNotes - Notebooks</title>
@@ -11,14 +12,16 @@
 	<h1>Notebooks</h1>
 	<hr />
 	<h:form>
+	  <p:messages />
+	  
 		<h:panelGrid columns="3" columnClasses="edit-grid-label-col">
-			<h:outputLabel value="Category :" />
+			<p:outputLabel value="Category :" />
 			<h:selectOneMenu value="#{notebookController.category}"
 				onchange="submit()" valueChangeListener="#{notebookController.categoryChanged}">
 				<f:selectItems value="#{notebookController.categorySelectItems}"
 					var="item" itemLabel="#{item.title}" itemValue="#{item.itemId}" />
 			</h:selectOneMenu>
-			<h:commandButton value="..."
+			<p:commandButton value="..."
 				action="#{notebookController.manageCategories}" />
 		</h:panelGrid>
 		<br />
@@ -53,7 +56,7 @@
 
 		<br />
 
-		<h:commandButton value="Add a new notebook"
+		<p:commandButton value="Add a new notebook"
 			action="#{notebookController.addNewNotebook}" />	
 	</h:form>
 	<hr />
