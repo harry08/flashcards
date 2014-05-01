@@ -80,22 +80,22 @@ public class CsvImporterTest {
 	}
 
 	/**
-	 * Tests importing of the file English_III.csv. The file contains 128 cards.
+	 * Tests importing of the file CardsImporterTest2.csv. The file contains 10 cards.
 	 * Some cards contain a description text.The file should be imported
 	 * successfully.
 	 * 
 	 * @throws CardsImporterException
 	 */
 	@Test
-	public void shouldImportFileEnglis_III() throws CardsImporterException {
-		String filename = "/English_III.csv";
+	public void shouldImportFile2() throws CardsImporterException {
+		String filename = "/CardsImporterTest2.csv";
 		String inputString = new FileUtils().getFileContent(filename);
 
 		List<Card> cardList = cardsImporter.interpretInputString(inputString);
-		assertEquals(128, cardList.size());
-		Card card128 = cardList.get(127);
-		assertEquals("sweep", card128.getFrontText());
-		assertEquals("fegen", card128.getBackText());
+		assertEquals(10, cardList.size());
+		Card card10 = cardList.get(9);
+		assertEquals("commodity", card10.getFrontText());
+		assertEquals("Ware, Erzeugnis", card10.getBackText());
 	}
 
 	@Test(expected = CardsImporterException.class)
@@ -154,14 +154,14 @@ public class CsvImporterTest {
 	}
 	
 	/**
-	 * Tests importing of the file Phrases.csv. The file should be
+	 * Tests importing of the file CardsImporterTest3.csv. The file should be
 	 * imported successfully. This file has quoted text with linebreaks.
 	 * 
 	 * @throws CardsImporterException
 	 */
 	@Test
-	public void shouldImportFilePhrases() throws CardsImporterException {
-		String filename = "/Phrases.csv";
+	public void shouldImportFileWithLinebreaks() throws CardsImporterException {
+		String filename = "/CardsImporterTest3.csv";
 		String inputString = new FileUtils().getFileContent(filename);
 
 		try {

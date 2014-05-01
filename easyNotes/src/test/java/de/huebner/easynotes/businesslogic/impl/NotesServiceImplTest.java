@@ -2,6 +2,7 @@ package de.huebner.easynotes.businesslogic.impl;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
@@ -23,6 +24,7 @@ import de.huebner.easynotes.businesslogic.NotesServiceBusinessException;
 import de.huebner.easynotes.businesslogic.data.Card;
 import de.huebner.easynotes.businesslogic.data.Category;
 import de.huebner.easynotes.businesslogic.data.Notebook;
+import de.huebner.easynotes.common.CommonConstants;
 
 public class NotesServiceImplTest {
 
@@ -171,17 +173,23 @@ public class NotesServiceImplTest {
 		System.out.println("Card 2: " + createdCard.toString());
 	}
 
+	/**
+	 * Imports the file CardsImporterTest2.csv. The file contains 10 cards.
+	 * Only fields fronttext, backtext and description.
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void shouldImportCardsFromFile() throws Exception {
 		// Create notebook
 		Notebook notebook = new Notebook();
-		notebook.setTitle("English III");
+		notebook.setTitle("English");
 		tx.begin();
 		notebook = notesService.updateNotebook(notebook);
 		tx.commit();
 
 		// Import cards
-		String filename = "/English_III.csv";
+		String filename = "/CardsImporterTest2.csv";
 		String inputString = new FileUtils().getFileContent(filename);
 		tx.begin();
 		try {
@@ -196,6 +204,61 @@ public class NotesServiceImplTest {
 
 		// Check
 		List<Card> cardsOfNotebook = notesService.getCardsOfNotebook(notebook);
-		assertEquals(128, cardsOfNotebook.size());
+		assertEquals(10, cardsOfNotebook.size());
+	}
+	
+	/**
+	 * Imports the file CardsImportAllFieldsTest2.csv. The file contains learn
+	 * progress.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void shouldImportCardsFromFileWithAllFields() throws Exception {
+		// Create notebook
+		Notebook notebook = new Notebook();
+		notebook.setTitle("English");
+		tx.begin();
+		notebook = notesService.updateNotebook(notebook);
+		tx.commit();
+
+		// Import cards
+		String filename = "/CardsImporterAllFieldsTest2.csv";
+		String inputString = new FileUtils().getFileContent(filename);
+		tx.begin();
+		try {
+			notesService.importCards(inputString, notebook);
+		} catch (NotesServiceBusinessException e) {
+			fail("Exception importing cards: " + e.toString());
+		} finally {
+			if (!tx.getRollbackOnly()) {
+				tx.commit();
+			}
+		}
+
+		// Check
+		List<Card> cardsOfNotebook = notesService.getCardsOfNotebook(notebook);
+		assertEquals(3, cardsOfNotebook.size());
+		Card card1 = getCard(cardsOfNotebook, "sales pitch");
+		assertEquals(9, card1.getCompartment());
+		assertNull(card1.getNextScheduled());
+		Card card2 = getCard(cardsOfNotebook, "stride");
+		assertEquals(2, card2.getCompartment());
+		String nextScheduledString = CommonConstants.TIMESTAMP_FMT.format(card2.getNextScheduled());
+		assertEquals("2014.03.08 07:12:06", nextScheduledString);
+		Card card3 = getCard(cardsOfNotebook, "rupture");
+		assertEquals(3, card3.getCompartment());
+		nextScheduledString = CommonConstants.TIMESTAMP_FMT.format(card3.getNextScheduled());
+		assertEquals("2014.03.25 17:22:34", nextScheduledString);
+	}
+	
+	private Card getCard(List<Card> cards, String frontText) {
+		for (Card card : cards) {
+			if (card.getFrontText().equals(frontText)) {
+				return card;
+			}
+		}
+		
+		return null;
 	}
 }

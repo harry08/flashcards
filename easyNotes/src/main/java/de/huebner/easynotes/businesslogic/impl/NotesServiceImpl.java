@@ -457,7 +457,14 @@ public class NotesServiceImpl implements Serializable {
 		int i = 0;
 		try {
 			for (Card currentCard : cardList) {
-				setAutomaticValues(currentCard);
+				if (currentCard.getCreated() == null) {
+					// No creationdate was provided with input data. 
+					// Set new values
+					Date insertionDate = new Date();
+					currentCard.setCreated(insertionDate);
+					currentCard.setModified(insertionDate);
+					currentCard.setNextScheduled(insertionDate);				
+				}
 				currentCard.setNotebook(notebook);
 				entityManager.persist(currentCard);
 

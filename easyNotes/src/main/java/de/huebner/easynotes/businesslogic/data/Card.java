@@ -34,7 +34,7 @@ import javax.persistence.TemporalType;
 		@NamedQuery(name = "Card.findAnsweredCardsOfNotebookRecentModified", query = "SELECT c FROM Card c "
 				+ "WHERE c.notebook = :notebook AND c.modified >= :modified"),		
 		@NamedQuery(name = "Card.findCardsForLesson", query = "SELECT c FROM Card c "
-				+ "WHERE c.notebook = :notebook AND (c.nextScheduled <= :nextScheduled) "
+				+ "WHERE c.notebook = :notebook AND c.compartment < 9 AND (c.nextScheduled <= :nextScheduled) "
 				+ "ORDER BY c.nextScheduled") })
 public class Card {
 
