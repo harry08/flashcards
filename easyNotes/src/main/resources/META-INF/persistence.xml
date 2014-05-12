@@ -3,13 +3,20 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0">
+    <!-- Persistence unit for production mode Glassfish with Eclipselink -->
     <persistence-unit name="NotesPersistenceUnit" transaction-type="JTA">
-        <jta-data-source>jdbc/chapter10DS</jta-data-source>
+        <jta-data-source>jdbc/chapter10DS</jta-data-source> 
+        
         <properties>
             <property name="eclipselink.target-database" value="MYSQL"/>
             <property name="eclipselink.logging.level" value="INFO"/>      
         </properties>
     </persistence-unit>
+    
+    <!-- Persistence unit for production mode JBoss with Hibernate -->
+    <!-- <persistence-unit name="NotesPersistenceUnit" transaction-type="JTA">
+        <jta-data-source>java:jboss/datasources/chapter10DS</jta-data-source>
+    </persistence-unit> -->
     
      <!-- Persistence unit for testing mode -->
     <persistence-unit name="TestPersistenceUnit" transaction-type="RESOURCE_LOCAL">
@@ -22,7 +29,7 @@
             <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="both" />
             <property name="eclipselink.logging.level" value="INFO"/>
-            <!-- Embedded mode -->
+
             <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:derby:memory:chapter02DB;create=true"/>
             <property name="javax.persistence.jdbc.user" value="APP"/>
