@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-2014-04-25 05:19:36.773 GMT:
- Booting Derby version The Apache Software Foundation - Apache Derby - 10.6.1.0 - (938214): instance a816c00e-0145-9753-1851-000003f9f9e8 
+2014-10-01 05:19:20.789 GMT:
+ Booting Derby version The Apache Software Foundation - Apache Derby - 10.6.1.0 - (938214): instance a816c00e-0148-ca25-fd8c-000003f977e8 
 on database directory memory:/Users/harry/git/flashcards/easyNotes/chapter02DB   with class loader sun.misc.Launcher$AppClassLoader@1729854
 
 Database Class Loader started - derby.database.classpath=''

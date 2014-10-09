@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html">
+<h:head>
+	<title>Login Form</title>
+</h:head>
+<h:body>
+	<p:panel header="Login">
+		<form method="POST" action="j_security_check">
+		  <h1>Login</h1>
+		  
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Username :" />
+				<input type="text" name="j_username" /> />
+        </h:panelGrid>
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Password :" />
+				<input type="text" name="j_password" /> />
+        </h:panelGrid>
+
+			<br />
+
+			<input type="submit" value="Login" />
+			<input type="reset" value="Reset" />
+
+		</form>
+	</p:panel>
+</h:body>
+</html>
