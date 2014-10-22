@@ -45,4 +45,8 @@ public class NotebookMapper {
 
 		return notebookTO;
 	}
+
+	public void mapTOToEntity(NotebookTO notebookTO, Notebook notebook) {
+		notebook.setTitle(notebookTO.getTitle());
+	}
 }

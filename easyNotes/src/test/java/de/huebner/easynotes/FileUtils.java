@@ -12,20 +12,21 @@ public class FileUtils {
 	public String getFileContent(String filename) {
 		File file = getFileFromFilename(filename);
 		if (!checkFileExists(file)) {
-			throw new RuntimeException("Required file " + filename + " does not exist.");
+			throw new RuntimeException("Required file " + filename
+					+ " does not exist.");
 		}
 
 		FileInputStream fis = null;
 		try {
-      fis = new FileInputStream(file);
+			fis = new FileInputStream(file);
 
-      byte[] reader = new byte[fis.available()];
-      while (fis.read(reader) != -1) {
-          // do nothing
-      }
+			byte[] reader = new byte[fis.available()];
+			while (fis.read(reader) != -1) {
+				// do nothing
+			}
 
-      return new String(reader);
-  } catch (IOException e) {
+			return new String(reader);
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} finally {
 			if (fis != null) {

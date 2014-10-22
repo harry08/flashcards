@@ -61,6 +61,21 @@
 			<version>${derby-version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<!-- REST client -->
+		<dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>javax.ws.rs-api</artifactId>
+      <version>2.0.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-client</artifactId>
+      <version>2.13</version>
+      <scope>test</scope>
+    </dependency>
+    
 
 		<dependency>
 			<groupId>org.primefaces</groupId>
