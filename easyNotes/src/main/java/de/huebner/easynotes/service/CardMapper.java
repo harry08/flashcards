@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.huebner.easynotes.businesslogic.data.Card;
+import de.huebner.easynotes.common.data.CardEntry;
 
 public class CardMapper {
 
@@ -17,14 +18,14 @@ public class CardMapper {
 	 *            Flag to indicate if notebook categories should be mapped.
 	 * @return Card transport object
 	 */
-	public CardTO mapEntityToTO(Card card) {
-		CardTO cardTO = new CardTO();
-		cardTO.setId(card.getId());
-		cardTO.setFrontText(card.getFrontText());
-		cardTO.setBackText(card.getBackText());
-		cardTO.setText(card.getText());
+	public CardEntry mapEntityToTO(Card card) {
+		CardEntry cardEntry = new CardEntry();
+		cardEntry.setId(card.getId());
+		cardEntry.setFrontText(card.getFrontText());
+		cardEntry.setBackText(card.getBackText());
+		cardEntry.setText(card.getText());
 
-		return cardTO;
+		return cardEntry;
 	}
 
 	/**
@@ -34,16 +35,16 @@ public class CardMapper {
 	 *            cards to map
 	 * @return List with Card transport objects
 	 */
-	public List<CardTO> mapEntityListToTOList(List<Card> cards) {
-		List<CardTO> cardTOs = new ArrayList<CardTO>(cards.size());
+	public List<CardEntry> mapEntityListToTOList(List<Card> cards) {
+		List<CardEntry> cardEntries = new ArrayList<CardEntry>(cards.size());
 		Iterator<Card> iterator = cards.iterator();
 		while (iterator.hasNext()) {
 			Card currentCard = iterator.next();
 
-			CardTO cardTO = mapEntityToTO(currentCard);
-			cardTOs.add(cardTO);
+			CardEntry cardEntry = mapEntityToTO(currentCard);
+			cardEntries.add(cardEntry);
 		}
 
-		return cardTOs;
+		return cardEntries;
 	}
 }

@@ -1,7 +1,9 @@
 <projectDescription>
   <name>easyNotes</name>
   <comment>Main project with easyNotes webapplication</comment>
-  <projects/>
+  <projects>
+    <project>easyNotesCommon</project>
+  </projects>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.wst.common.project.facet.core.builder</name>

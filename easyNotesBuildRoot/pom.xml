@@ -130,6 +130,7 @@
 	
 	<modules>
     		<module>../easyNotes</module>    
+    		<module>../easyNotesCommon</module>
   	</modules>
 
 </project>	

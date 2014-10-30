@@ -8,6 +8,7 @@
   <classpathentry kind="var" path="M2_REPO/org/glassfish/hk2/external/aopalliance-repackaged/2.3.0-b10/aopalliance-repackaged-2.3.0-b10.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/derby/derby/10.6.1.0/derby-10.6.1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/derby/derbyclient/10.6.1.0/derbyclient-10.6.1.0.jar"/>
+  <classpathentry kind="src" path="/easyNotesCommon"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/persistence/eclipselink/2.3.2/eclipselink-2.3.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/glassfish/hk2/hk2-api/2.3.0-b10/hk2-api-2.3.0-b10.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/glassfish/hk2/hk2-locator/2.3.0-b10/hk2-locator-2.3.0-b10.jar"/>

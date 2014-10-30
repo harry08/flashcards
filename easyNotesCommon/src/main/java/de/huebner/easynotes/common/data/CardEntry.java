@@ -1,16 +1,12 @@
-package de.huebner.easynotes.service;
+package de.huebner.easynotes.common.data;
 
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * Transport object for a card
- */
 @XmlRootElement
-@Deprecated
-public class CardTO {
-	
+public class CardEntry {
+
 	private long id;
 	
 	private String frontText;

@@ -17,6 +17,16 @@
 	</parent>
 
 	<dependencies>
+
+		<!-- Internal dependencies -->
+    <dependency>
+      <groupId>de.huebner.easynotes</groupId>
+      <artifactId>easyNotesCommon</artifactId>
+      <version>1.0.0-SNAPSHOT</version>      
+    </dependency>
+
+		<!-- Libraries -->
+		<!-- JEE -->
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>javax.persistence</artifactId>
@@ -36,12 +46,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>jsr311-api</artifactId>
-      <version>${jaxrs-version}</version>
-      <scope>provided</scope>
-    </dependency>
-		
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>jsr311-api</artifactId>
+			<version>${jaxrs-version}</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>eclipselink</artifactId>
@@ -49,6 +59,7 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Derby DB for testing purposes -->
 		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derbyclient</artifactId>
@@ -61,21 +72,21 @@
 			<version>${derby-version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- REST client -->
 		<dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>javax.ws.rs-api</artifactId>
-      <version>2.0.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jersey.core</groupId>
-      <artifactId>jersey-client</artifactId>
-      <version>2.13</version>
-      <scope>test</scope>
-    </dependency>
-    
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>2.13</version>
+			<scope>test</scope>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.primefaces</groupId>

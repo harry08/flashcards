@@ -1,21 +1,16 @@
-package de.huebner.easynotes.service;
+package de.huebner.easynotes.common.data;
 
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * Transport object for a notebook
- */
 @XmlRootElement
-@Deprecated
-public class NotebookTO {
-	
+public class NotebookEntry {
 	private long id;
 	
 	private String title;
 	
-	private List<CategoryTO> notebookCategories;
+	private List<CategoryEntry> notebookCategories;
 
 	public long getId() {
 		return id;
@@ -33,11 +28,11 @@ public class NotebookTO {
 		this.title = title;
 	}
 	
-	public List<CategoryTO> getNotebookCategories() {
+	public List<CategoryEntry> getNotebookCategories() {
 		return notebookCategories;
 	}
 	
-	public void setNotebookCategories(List<CategoryTO> notebookCategories) {
+	public void setNotebookCategories(List<CategoryEntry> notebookCategories) {
 		this.notebookCategories = notebookCategories;
 	}
 }

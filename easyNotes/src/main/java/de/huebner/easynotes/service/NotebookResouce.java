@@ -8,11 +8,14 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -21,6 +24,7 @@ import javax.xml.bind.JAXBElement;
 
 import de.huebner.easynotes.businesslogic.data.Notebook;
 import de.huebner.easynotes.businesslogic.impl.NotesServiceImpl;
+import de.huebner.easynotes.common.data.NotebookEntry;
 
 /**
  * REST Service for Notebooks
@@ -43,20 +47,20 @@ public class NotebookResouce {
 	 * http://127.0.0.1:8080/easyNotes-1.0.0-SNAPSHOT/rs/notebooks
 	 */
 	@GET
-	public List<NotebookTO> getAllNotebooks() {
+	public List<NotebookEntry> getAllNotebooks() {
 		List<Notebook> notebooks = notesServiceImpl.getAllNotebooks();
 
 		NotebookMapper mapper = new NotebookMapper();
-		List<NotebookTO> notebookTOs = new ArrayList<NotebookTO>(
+		List<NotebookEntry> notebookEntries = new ArrayList<NotebookEntry>(
 				notebooks.size());
 		Iterator<Notebook> iterator = notebooks.iterator();
 		while (iterator.hasNext()) {
-			NotebookTO notebookTO = mapper
+			NotebookEntry notebookEntry = mapper
 					.mapEntityToTO(iterator.next(), false);
-			notebookTOs.add(notebookTO);
+			notebookEntries.add(notebookEntry);
 		}
 
-		return notebookTOs;
+		return notebookEntries;
 	}
 
 	/**
@@ -71,16 +75,16 @@ public class NotebookResouce {
 	 */
 	@GET
 	@Path("{notebookId}/")
-	public NotebookTO getNotebook(@PathParam("notebookId") long notebookId) {
+	public NotebookEntry getNotebook(@PathParam("notebookId") long notebookId) {
 		Notebook foundNotebook = notesServiceImpl.getNotebook(notebookId);
 		if (foundNotebook != null) {
 			NotebookMapper mapper = new NotebookMapper();
-			NotebookTO notebookTO = mapper.mapEntityToTO(foundNotebook, true);
+			NotebookEntry notebookEntry = mapper.mapEntityToTO(foundNotebook, true);
 
-			return notebookTO;
-		}
-
-		return null;
+			return notebookEntry;
+		} else {
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		}		
 	}
 	
 	/**
@@ -91,16 +95,48 @@ public class NotebookResouce {
 	 * @return Response with the URI of the newly created notebook
 	 */
 	@POST
-	public Response createNewNotebook(JAXBElement<NotebookTO> notebookJaxb) {
-		NotebookTO notebookTO = notebookJaxb.getValue();
+	public Response createNewNotebook(JAXBElement<NotebookEntry> notebookJaxb) {
+		NotebookEntry notebookEntry = notebookJaxb.getValue();
 		
 		NotebookMapper mapper = new NotebookMapper();
 		Notebook notebook = new Notebook();
-		mapper.mapTOToEntity(notebookTO, notebook);
+		mapper.mapTOToEntity(notebookEntry, notebook);
 		notebook = notesServiceImpl.updateNotebook(notebook);
 
 		URI notebookUri = uriInfo.getAbsolutePathBuilder()
 				.path(String.valueOf(notebook.getId())).build();
 		return Response.created(notebookUri).build();
+	}
+	
+	/**
+	 * Updates the given notebook.
+	 * 
+	 * @param notebookId
+	 *            if of the notebook to update
+	 * @param notebookJaxb
+	 *            notebook data
+	 */
+	@PUT
+	@Path("{notebookId}/")
+	public void updateNotebook(@PathParam("notebookId") long notebookId,
+			JAXBElement<NotebookEntry> notebookJaxb) {
+
+	}
+
+	/**
+	 * Deletes the given notebook.
+	 * 
+	 * @param notebookId
+	 *            if of the notebook to delete
+	 */
+	@DELETE
+	@Path("{notebookId}/")
+	public void deleteNotebook(@PathParam("notebookId") long notebookId) {
+		Notebook foundNotebook = notesServiceImpl.getNotebook(notebookId);
+		if (foundNotebook != null) {
+			notesServiceImpl.deleteNotebook(foundNotebook);
+		} else {
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		}	 
 	}
 }

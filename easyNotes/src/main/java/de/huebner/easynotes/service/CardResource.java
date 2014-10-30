@@ -10,13 +10,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import de.huebner.easynotes.businesslogic.data.Card;
 import de.huebner.easynotes.businesslogic.data.Notebook;
 import de.huebner.easynotes.businesslogic.impl.NotesServiceImpl;
+import de.huebner.easynotes.common.data.CardEntry;
 
 /**
  * REST Service for Cards
@@ -39,16 +42,16 @@ public class CardResource {
 	 */
 	@GET
 	@Path("{cardId}/")
-	public CardTO getCard(@PathParam("cardId") long cardId) {
+	public CardEntry getCard(@PathParam("cardId") long cardId) {
 		Card foundCard = notesServiceImpl.getCard(cardId);
 		if (foundCard != null) {
 			CardMapper mapper = new CardMapper();
-			CardTO cardTO = mapper.mapEntityToTO(foundCard);
+			CardEntry cardEntry = mapper.mapEntityToTO(foundCard);
 			
-			return cardTO;
-		}
-		
-		return null;
+			return cardEntry;
+		} else {
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		}	
 	}
 	
 	/**
@@ -58,16 +61,16 @@ public class CardResource {
 	 */
 	@GET
 	@Path("/query")
-	public List<CardTO> getCardsOfNotebook(
+	public List<CardEntry> getCardsOfNotebook(
 			@QueryParam("notebookId") long notebookId) {
 		Notebook foundNotebook = notesServiceImpl.getNotebook(notebookId);
 		if (foundNotebook != null) {
 			List<Card> cards = notesServiceImpl.getCardsOfNotebook(foundNotebook);
 			
 			CardMapper mapper = new CardMapper();
-			List<CardTO> cardTOList = mapper.mapEntityListToTOList(cards);
+			List<CardEntry> cardEntryList = mapper.mapEntityListToTOList(cards);
 
-			return cardTOList;
+			return cardEntryList;
 		}
 
 		return null;

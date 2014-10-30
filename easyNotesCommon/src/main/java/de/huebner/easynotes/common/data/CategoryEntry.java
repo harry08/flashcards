@@ -1,10 +1,9 @@
-package de.huebner.easynotes.service;
+package de.huebner.easynotes.common.data;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-@Deprecated
-public class CategoryTO {
+public class CategoryEntry {
 
 	private long id;
 	
