@@ -129,8 +129,9 @@
 	</build>
 	
 	<modules>
-    		<module>../easyNotes</module>    
     		<module>../easyNotesCommon</module>
+    		<module>../easyNotes</module>        		
+    		<module>../easyNotesClientAPI</module>
   	</modules>
 
 </project>	
