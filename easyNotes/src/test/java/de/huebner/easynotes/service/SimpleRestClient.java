@@ -16,7 +16,9 @@ import de.huebner.easynotes.common.data.CardEntry;
 import de.huebner.easynotes.common.data.NotebookEntry;
 
 /**
- * Simple client that reads data via the REST API.
+ * Simple client that reads data via the REST API. <br>
+ * Uses Jax-RS API with the Jersey implementation. <br>
+ * The application needs to be deployed on a local server.
  */
 public class SimpleRestClient {
 
@@ -106,8 +108,7 @@ public class SimpleRestClient {
 						Response.class);
 		if (response.getStatus() == Status.CREATED.getStatusCode()) {
 			System.out.println("Notebook successfully created");
-			// System.out.println("URI of the new notebook: " +
-			// response.getLocation());
+			// TODO get the URI of the newly created notebook. Response.getLocation()
 		} else {
 			System.out.println("Error creating notebook");
 		}

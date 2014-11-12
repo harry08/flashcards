@@ -7,6 +7,7 @@ import java.util.List;
 import de.huebner.easynotes.businesslogic.data.Card;
 import de.huebner.easynotes.common.data.CardEntry;
 
+
 public class CardMapper {
 
 	/**
@@ -29,7 +30,7 @@ public class CardMapper {
 	}
 
 	/**
-	 * Maps a list of card entities to a newly created CardTO list.
+	 * Maps a list of card entities to a newly created CardEntry list.
 	 * 
 	 * @param cards
 	 *            cards to map
@@ -46,5 +47,20 @@ public class CardMapper {
 		}
 
 		return cardEntries;
+	}
+	
+	/**
+	 * Maps a given cardEntry object to a Card entity object.
+	 * Only client changeable data is being mapped.
+	 * 
+	 * @param cardEntry
+	 *            object to map
+	 * @param card
+	 *            target object
+	 */
+	public void mapTOToEntity(CardEntry cardEntry, Card card) {
+		card.setFrontText(cardEntry.getFrontText());
+		card.setFrontText(cardEntry.getBackText());
+		card.setFrontText(cardEntry.getText());
 	}
 }

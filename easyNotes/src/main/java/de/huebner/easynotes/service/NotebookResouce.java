@@ -105,14 +105,16 @@ public class NotebookResouce {
 
 		URI notebookUri = uriInfo.getAbsolutePathBuilder()
 				.path(String.valueOf(notebook.getId())).build();
-		return Response.created(notebookUri).build();
+		Response creationResponse = Response.created(notebookUri).build();
+		
+		return creationResponse;
 	}
 	
 	/**
 	 * Updates the given notebook.
 	 * 
 	 * @param notebookId
-	 *            if of the notebook to update
+	 *            id of the notebook to update
 	 * @param notebookJaxb
 	 *            notebook data
 	 */
@@ -127,7 +129,7 @@ public class NotebookResouce {
 	 * Deletes the given notebook.
 	 * 
 	 * @param notebookId
-	 *            if of the notebook to delete
+	 *            id of the notebook to delete
 	 */
 	@DELETE
 	@Path("{notebookId}/")

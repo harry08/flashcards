@@ -74,6 +74,7 @@
 		</dependency>
 
 		<!-- REST client -->
+		<!-- Only for testing purposes -->
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
